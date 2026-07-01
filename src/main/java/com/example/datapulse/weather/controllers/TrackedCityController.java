@@ -18,11 +18,11 @@ public class TrackedCityController {
 
     private final TrackedCityServices trackedCityService;
 
-    @GetMapping("/all-tracked/{userId}")
+    @GetMapping("/all-tracked/{userEmail}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCity(@PathVariable Integer userId) {
+    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCity(@PathVariable String userEmail) {
 
-        log.info("L'id reçu : "+ userId);
+        log.info("L'id reçu : "+ userEmail);
 
         //List<TrackedCityEntity> userTrackedCityList = TrackedCityServices.getAllTrackedCityByUser(1);
 
