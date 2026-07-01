@@ -21,6 +21,7 @@ public class TrackedCityEntity {
     String country;
     Double latitude;
     Double longitude;
-    String userEmail;
+    @Column(name = "user_email")
+    private String userEmail;
 
 }

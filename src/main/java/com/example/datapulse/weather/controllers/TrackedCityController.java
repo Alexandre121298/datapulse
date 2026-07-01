@@ -9,24 +9,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/tracked-cities")
-@RequiredArgsConstructor
 public class TrackedCityController {
 
     private final TrackedCityServices trackedCityService;
 
-    @GetMapping("/all-tracked/{userEmail}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCity(@PathVariable String userEmail) {
+    public TrackedCityController(TrackedCityServices trackedCityService) {
+        this.trackedCityService = trackedCityService;
+    }
+
+    @GetMapping("/all-tracked")
+    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCity(@RequestParam String userEmail) {
 
         log.info("L'id reçu : "+ userEmail);
 
-        //List<TrackedCityEntity> userTrackedCityList = TrackedCityServices.getAllTrackedCityByUser(1);
-
-        return null;
+        return ResponseEntity.ok(
+                trackedCityService.getAllTrackedCityByUser(userEmail)
+        );
     }
 
     @PostMapping("/create-tracked-city")

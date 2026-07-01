@@ -1,5 +1,6 @@
 package com.example.datapulse.weather.services;
 
+import com.example.datapulse.weather.dto.TrackedCityDTO;
 import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.repository.TrackedCityRepository;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,29 @@ public class TrackedCityServices {
     }
 
 
-    public List<TrackedCityEntity> getAllTrackedCityByUser(String userEmail) {
+    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCityByUser(String userEmail) {
 
-        //Todo : Ecrire early checks
+        System.out.println("userEmail reçu = " + userEmail);
 
-        return trackedCityRepository.findByUserEmail(userEmail);
+        if (userEmail == null || userEmail.isBlank()) {
+            throw new IllegalArgumentException("User email cannot be null or blank");
+        }
 
+        return trackedCityRepository.findByUserEmail(userEmail)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
+    }
+
+    private TrackedCityDTO.TrackedCityOutput toResponse(TrackedCityEntity entity) {
+        return new TrackedCityDTO.TrackedCityOutput(
+                entity.getId(),
+                entity.getName(),
+                entity.getCountry(),
+                entity.getLatitude(),
+                entity.getLongitude()
+        );
     }
 
     public TrackedCityEntity createTrackedCity(String name, String country, String userEmail) {
