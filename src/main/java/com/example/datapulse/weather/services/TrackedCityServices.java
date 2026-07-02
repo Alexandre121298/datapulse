@@ -3,6 +3,7 @@ package com.example.datapulse.weather.services;
 import com.example.datapulse.weather.dto.TrackedCityDTO;
 import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.repository.TrackedCityRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,4 +58,16 @@ public class TrackedCityServices {
     }
 
 
+    public void deleteTrackedCity(Integer id) {
+
+        if (!trackedCityRepository.existsById(id)) {
+            throw new EntityNotFoundException("Tracked city not found");
+        }
+
+        //todo : ajouter la comparaison d'email entre l'email lié a la ville que l'on veut supprimer
+        // et l'email de l'utilisateur qui sera connecté avec OAuth2
+
+        trackedCityRepository.deleteById(id);
+
+    }
 }

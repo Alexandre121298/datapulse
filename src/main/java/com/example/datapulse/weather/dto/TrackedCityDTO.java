@@ -1,5 +1,6 @@
 package com.example.datapulse.weather.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class TrackedCityDTO {
         String name;
         @NotNull @NotBlank
         String country;
-        @NotNull @NotBlank
+        @NotNull @NotBlank @Email
         String userEmail;
     }
 

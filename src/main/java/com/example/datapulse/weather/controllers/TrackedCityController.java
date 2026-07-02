@@ -47,10 +47,13 @@ public class TrackedCityController {
 
     }
 
-    public void deleteTrackedCity()
-    {
-        //todo : Implementer le delete
-        //Objectif : Pouvoir supprimer une ville qui est suivie par l'utilisateur
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTrackedCity(@PathVariable Integer id) {
+        trackedCityService.deleteTrackedCity(id);
+
+        log.info("La ville a bien été supprimé !");
+
+        return ResponseEntity.ok().build();
     }
 
 
