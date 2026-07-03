@@ -6,6 +6,7 @@ import com.example.datapulse.weather.services.TrackedCityServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +24,23 @@ public class TrackedCityController {
     }
 
     @GetMapping("/all-tracked")
-    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCity(@RequestParam String userEmail) {
+    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail) {
 
-        log.info("L'id reçu : "+ userEmail);
+        log.info("L'Email utilisateur reçu : "+ userEmail);
 
-        return ResponseEntity.ok(
-                trackedCityService.getAllTrackedCityByUser(userEmail)
-        );
+        return ResponseEntity.ok(trackedCityService.getAllTrackedCitiesByUser(userEmail));
+    }
+
+    @GetMapping("city")
+    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCityByUser(
+            @Valid @RequestParam String userEmail,
+            @Valid @RequestParam String cityName,
+            @Valid @RequestParam String cityCountry) throws BadRequestException {
+        log.info("L'Email utilisateur reçu :"+userEmail);
+        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+cityName);
+        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+cityCountry);
+
+        return ResponseEntity.ok(trackedCityService.getTrackedCityByUser(userEmail,cityName,cityCountry));
     }
 
     @PostMapping("/create-tracked-city")
@@ -41,8 +52,8 @@ public class TrackedCityController {
 
         return TrackedCityDTO.TrackedCityOutput.builder()
                 .id(trackedCityEntity.getId())
-                .name(trackedCityEntity.getName())
-                .country(trackedCityEntity.getCountry())
+                .name(trackedCityEntity.getCityName())
+                .country(trackedCityEntity.getCityCountry())
                 .build();
 
     }

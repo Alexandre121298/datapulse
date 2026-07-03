@@ -7,7 +7,10 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 // TODO : Remove the exclude when Postgres will be configured
-@SpringBootApplication(scanBasePackages = {"com.example.datapulse.weather.*"})
+@SpringBootApplication(scanBasePackages = {
+		"com.example.datapulse.weather.*",
+		"com.example.datapulse.common.exception"
+})
 @EnableJpaRepositories(basePackages = {"com.example.datapulse.weather.repository"})
 @EntityScan(basePackages = {"com.example.datapulse.weather.models"})
 public class DatapulseApplication {

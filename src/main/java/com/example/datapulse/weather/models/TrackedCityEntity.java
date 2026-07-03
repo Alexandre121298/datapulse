@@ -17,8 +17,8 @@ public class TrackedCityEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    String name;
-    String country;
+    String cityName;
+    String cityCountry;
     Double latitude;
     Double longitude;
     @Column(name = "user_email")
