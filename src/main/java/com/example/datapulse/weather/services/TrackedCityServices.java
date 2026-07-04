@@ -82,11 +82,27 @@ public class TrackedCityServices {
                 .build();
     }
 
-    public TrackedCityEntity createTrackedCity(String name, String country, String userEmail) {
+    public TrackedCityEntity createTrackedCity(String cityName, String cityCountry, String userEmail) throws BadRequestException {
+
+        //todo : A supprimer quand l'authentification sera mis en place
+        if(userEmail == null || userEmail.isBlank())
+        {
+            throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
+        }
+
+        if(cityName == null || cityName.isBlank())
+        {
+            throw new BadRequestException("Le nom de la ville ne peux pas être null ou vide");
+        }
+
+        if(cityCountry == null || cityCountry.isBlank())
+        {
+            throw new BadRequestException("Le pays de la ville demandée ne peux pas être null ou vide");
+        }
 
         TrackedCityEntity trackedCityEntity = TrackedCityEntity.builder()
-                                                               .cityName(name)
-                                                               .cityCountry(country)
+                                                               .cityName(cityName)
+                                                               .cityCountry(cityCountry)
                                                                .userEmail(userEmail)
                                                                .build();
 
@@ -97,16 +113,34 @@ public class TrackedCityServices {
     }
 
 
-    public void deleteTrackedCity(Integer id) {
+    public void deleteTrackedCity(String userEmail, String cityName, String cityCountry) throws BadRequestException {
 
-        if (!trackedCityRepository.existsById(id)) {
-            throw new EntityNotFoundException("Tracked city not found");
+        //todo : A supprimer quand l'authentification sera mis en place
+        if(userEmail == null || userEmail.isBlank())
+        {
+            throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
+        }
+
+        if(cityName == null || cityName.isBlank())
+        {
+            throw new BadRequestException("Le nom de la ville ne peux pas être null ou vide");
+        }
+
+        if(cityCountry == null || cityCountry.isBlank())
+        {
+            throw new BadRequestException("Le pays de la ville demandée ne peux pas être null ou vide");
+        }
+
+        TrackedCityEntity trackedCity = trackedCityRepository.findByUserEmailAndCityNameAndCityCountry(userEmail,cityName,cityCountry);
+
+        if (trackedCity == null) {
+            throw new TrackedCityNotFoundException(userEmail,cityName,cityCountry);
         }
 
         //todo : ajouter la comparaison d'email entre l'email lié a la ville que l'on veut supprimer
         // et l'email de l'utilisateur qui sera connecté avec OAuth2
 
-        trackedCityRepository.deleteById(id);
+        trackedCityRepository.delete(trackedCity);
 
     }
 }

@@ -44,8 +44,11 @@ public class TrackedCityController {
     }
 
     @PostMapping("/create-tracked-city")
-    public TrackedCityDTO.TrackedCityOutput createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) {
+    public TrackedCityDTO.TrackedCityOutput createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) throws BadRequestException {
 
+        log.info("L'Email utilisateur reçu :"+input.getUserEmail());
+        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+input.getName());
+        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+input.getCountry());
 
         TrackedCityEntity trackedCityEntity = trackedCityService.createTrackedCity(input.getName(),input.getCountry(),input.getUserEmail());
 
@@ -58,9 +61,17 @@ public class TrackedCityController {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrackedCity(@PathVariable Integer id) {
-        trackedCityService.deleteTrackedCity(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteTrackedCity(
+              @Valid @RequestParam String userEmail,
+              @Valid @RequestParam String cityName,
+              @Valid @RequestParam String cityCountry) throws BadRequestException {
+
+        log.info("L'Email utilisateur reçu :"+userEmail);
+        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+cityName);
+        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+cityCountry);
+
+        trackedCityService.deleteTrackedCity(userEmail,cityName,cityCountry);
 
         log.info("La ville a bien été supprimé !");
 
