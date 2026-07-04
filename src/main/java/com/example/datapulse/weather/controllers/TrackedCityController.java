@@ -24,7 +24,7 @@ public class TrackedCityController {
     }
 
     @GetMapping("/all-tracked")
-    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail) {
+    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail) throws BadRequestException {
 
         log.info("L'Email utilisateur reçu : "+ userEmail);
 
@@ -58,7 +58,6 @@ public class TrackedCityController {
                 .name(trackedCityEntity.getCityName())
                 .country(trackedCityEntity.getCityCountry())
                 .build();
-
     }
 
     @DeleteMapping("/delete")

@@ -1,5 +1,6 @@
 package com.example.datapulse.weather.services;
 
+import com.example.datapulse.common.exception.ConflictException;
 import com.example.datapulse.common.exception.TrackedCityNotFoundException;
 import com.example.datapulse.weather.dto.TrackedCityDTO;
 import com.example.datapulse.weather.models.TrackedCityEntity;
@@ -20,12 +21,12 @@ public class TrackedCityServices {
     }
 
 
-    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail) {
+    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail) throws BadRequestException {
 
         System.out.println("userEmail reçu = " + userEmail);
 
         if (userEmail == null || userEmail.isBlank()) {
-            throw new IllegalArgumentException("User email cannot be null or blank");
+            throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
         }
 
         return trackedCityRepository.findByUserEmail(userEmail)
@@ -100,11 +101,17 @@ public class TrackedCityServices {
             throw new BadRequestException("Le pays de la ville demandée ne peux pas être null ou vide");
         }
 
+
+        //todo : Try/Catch pour gerer si la creation de la ville s'est bien passée ?
         TrackedCityEntity trackedCityEntity = TrackedCityEntity.builder()
                                                                .cityName(cityName)
                                                                .cityCountry(cityCountry)
                                                                .userEmail(userEmail)
                                                                .build();
+
+        if (trackedCityRepository.existsByUserEmailAndCityNameAndCityCountry(userEmail,cityName,cityCountry)) {
+            throw new ConflictException("Cette ville est déjà suivie par cet utilisateur.");
+        }
 
         trackedCityRepository.save(trackedCityEntity);
 

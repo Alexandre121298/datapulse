@@ -12,4 +12,6 @@ public interface TrackedCityRepository extends JpaRepository<TrackedCityEntity, 
     List<TrackedCityEntity> findByUserEmail(String userEmail);
 
     TrackedCityEntity findByUserEmailAndCityNameAndCityCountry(String userEmail, String cityName, String cityCountry);
+
+    boolean existsByUserEmailAndCityNameAndCityCountry(String userEmail, String cityName, String cityCountry);
 }
