@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class TrackedCityServices {
     }
 
 
-    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail) throws BadRequestException {
+    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail, Pageable pageable) throws BadRequestException {
 
         System.out.println("userEmail reçu = " + userEmail);
 
@@ -29,7 +30,7 @@ public class TrackedCityServices {
             throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
         }
 
-        return trackedCityRepository.findByUserEmail(userEmail)
+        return trackedCityRepository.findByUserEmail(userEmail, pageable)
                 .stream()
                 .map(this::toResponse)
                 .toList();

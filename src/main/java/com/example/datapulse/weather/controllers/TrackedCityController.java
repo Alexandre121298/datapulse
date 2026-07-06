@@ -13,6 +13,8 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Slf4j
@@ -32,11 +34,11 @@ public class TrackedCityController {
             @ApiResponse(responseCode = "400", description = "Requête invalide"),
     })
     @GetMapping("/all-tracked")
-    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail) throws BadRequestException {
+    public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail, Pageable pageable) throws BadRequestException {
 
         log.info("L'Email utilisateur reçu : "+ userEmail);
 
-        return ResponseEntity.ok(trackedCityService.getAllTrackedCitiesByUser(userEmail));
+        return ResponseEntity.ok(trackedCityService.getAllTrackedCitiesByUser(userEmail,pageable));
     }
 
     @Operation(summary = "Retourner une ville spécifique suivie par l'utilisateur")
