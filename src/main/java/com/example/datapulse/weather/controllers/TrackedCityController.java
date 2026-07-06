@@ -3,6 +3,9 @@ package com.example.datapulse.weather.controllers;
 import com.example.datapulse.weather.dto.TrackedCityDTO;
 import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.services.TrackedCityServices;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,11 @@ public class TrackedCityController {
         this.trackedCityService = trackedCityService;
     }
 
+    @Operation(summary = "Lister la totalité des villes suivies par l'utilisateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Toutes les villes sont retournées"),
+            @ApiResponse(responseCode = "400", description = "Requête invalide"),
+    })
     @GetMapping("/all-tracked")
     public ResponseEntity<List<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail) throws BadRequestException {
 
@@ -31,6 +39,11 @@ public class TrackedCityController {
         return ResponseEntity.ok(trackedCityService.getAllTrackedCitiesByUser(userEmail));
     }
 
+    @Operation(summary = "Retourner une ville spécifique suivie par l'utilisateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "La ville demandée est retournée"),
+            @ApiResponse(responseCode = "400", description = "Requête invalide"),
+    })
     @GetMapping("city")
     public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCityByUser(
             @Valid @RequestParam String userEmail,
@@ -43,6 +56,12 @@ public class TrackedCityController {
         return ResponseEntity.ok(trackedCityService.getTrackedCityByUser(userEmail,cityName,cityCountry));
     }
 
+    @Operation(summary = "Créer une ville suivie")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Ville suivie créée"),
+            @ApiResponse(responseCode = "400", description = "Requête invalide"),
+            @ApiResponse(responseCode = "409", description = "Ville déjà suivie")
+    })
     @PostMapping("/create-tracked-city")
     public TrackedCityDTO.TrackedCityOutput createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) throws BadRequestException {
 
@@ -60,6 +79,11 @@ public class TrackedCityController {
                 .build();
     }
 
+    @Operation(summary = "Supprimer une ville suivie")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "La ville a été supprimé"),
+            @ApiResponse(responseCode = "400", description = "Requête invalide"),
+    })
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteTrackedCity(
               @Valid @RequestParam String userEmail,
