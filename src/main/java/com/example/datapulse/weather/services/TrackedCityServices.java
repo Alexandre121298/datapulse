@@ -7,6 +7,7 @@ import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.repository.TrackedCityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public class TrackedCityServices {
     }
 
 
-    public List<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail, Pageable pageable) throws BadRequestException {
+    public Page<TrackedCityDTO.TrackedCityOutput> getAllTrackedCitiesByUser(String userEmail, Pageable pageable) throws BadRequestException {
 
         System.out.println("userEmail reçu = " + userEmail);
 
@@ -30,11 +31,20 @@ public class TrackedCityServices {
             throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
         }
 
-        return trackedCityRepository.findByUserEmail(userEmail, pageable)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        Page<TrackedCityEntity> page = trackedCityRepository.findByUserEmail(userEmail, pageable);
 
+        return page.map(this::convertToOutput);
+
+    }
+
+    private TrackedCityDTO.TrackedCityOutput convertToOutput(TrackedCityEntity trackedCity) {
+        return new TrackedCityDTO.TrackedCityOutput(
+                trackedCity.getId(),
+                trackedCity.getCityName(),
+                trackedCity.getCityCountry(),
+                trackedCity.getLatitude(),
+                trackedCity.getLongitude()
+        );
     }
 
     private TrackedCityDTO.TrackedCityOutput toResponse(TrackedCityEntity entity) {
