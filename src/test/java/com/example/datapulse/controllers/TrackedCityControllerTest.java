@@ -4,7 +4,6 @@ import com.example.datapulse.weather.dto.TrackedCityDTO;
 import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.services.TrackedCityServices;
 import com.example.datapulse.weather.controllers.TrackedCityController;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -19,11 +18,12 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(TrackedCityController.class)
@@ -74,7 +74,7 @@ class TrackedCityControllerTest {
     }
 
     @Test
-    void shouldReturnOkWhenCreateTrackedCity() throws Exception {
+    void shouldReturnCreatedWhenCreateTrackedCity() throws Exception {
 
         TrackedCityEntity TrackedCityEntity = new TrackedCityEntity();
 
@@ -97,5 +97,27 @@ class TrackedCityControllerTest {
                         .content(jsonBody))
                 .andExpect(status().isCreated());
 
+    }
+
+    @Test
+    void shouldDeleteTrackedCity() throws Exception {
+
+        doNothing().when(trackedCityService).deleteTrackedCity(
+                eq("AutreTest@Test.fr"),
+                eq("Lille"),
+                eq("France")
+        );
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("cityName", "Lille")
+                        .param("cityCountry", "France"))
+                .andExpect(status().isNoContent());
+
+        verify(trackedCityService).deleteTrackedCity(
+                eq("AutreTest@Test.fr"),
+                eq("Lille"),
+                eq("France")
+        );
     }
 }

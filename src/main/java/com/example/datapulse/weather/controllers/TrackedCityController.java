@@ -85,7 +85,7 @@ public class TrackedCityController {
 
     @Operation(summary = "Supprimer une ville suivie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "La ville a été supprimé"),
+            @ApiResponse(responseCode = "200", description = "La ville a été supprimé"),
             @ApiResponse(responseCode = "400", description = "Requête invalide"),
     })
     @DeleteMapping("/delete")
@@ -102,7 +102,7 @@ public class TrackedCityController {
 
         log.info("La ville a bien été supprimé !");
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 
