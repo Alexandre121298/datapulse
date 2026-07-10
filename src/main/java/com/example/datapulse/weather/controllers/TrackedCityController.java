@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +65,7 @@ public class TrackedCityController {
             @ApiResponse(responseCode = "409", description = "Ville déjà suivie")
     })
     @PostMapping("/create-tracked-city")
-    public TrackedCityDTO.TrackedCityOutput createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) throws BadRequestException {
+    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) throws BadRequestException {
 
         log.info("L'Email utilisateur reçu :"+input.getUserEmail());
         log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+input.getName());
@@ -73,11 +74,13 @@ public class TrackedCityController {
         TrackedCityEntity trackedCityEntity = trackedCityService.createTrackedCity(input.getName(),input.getCountry(),input.getUserEmail());
 
 
-        return TrackedCityDTO.TrackedCityOutput.builder()
+        TrackedCityDTO.TrackedCityOutput output = TrackedCityDTO.TrackedCityOutput.builder()
                 .id(trackedCityEntity.getId())
                 .name(trackedCityEntity.getCityName())
                 .country(trackedCityEntity.getCityCountry())
                 .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @Operation(summary = "Supprimer une ville suivie")
