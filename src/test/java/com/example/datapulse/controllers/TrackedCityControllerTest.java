@@ -73,8 +73,39 @@ class TrackedCityControllerTest {
                 any(Pageable.class)
         );
     }
+    
+    @Test
+    void shouldReturnBadRequestWhenGetUserEmailIsEmpty() throws Exception {
 
-    //todo : Tester avec a chaque fois une valeur vide ou null pour le Get All
+        doThrow(new BadRequestException("L'email ne peut pas être vide"))
+                .when(trackedCityService)
+                .getAllTrackedCitiesByUser(
+                        eq(""),
+                        any(Pageable.class)
+                );
+
+        mockMvc.perform(get("/api/tracked-cities/all-tracked")
+                        .param("userEmail", "")
+                        .param("page", "0")
+                        .param("size", "2"))
+                .andExpect(status().isBadRequest());
+
+        verify(trackedCityService).getAllTrackedCitiesByUser(
+                eq(""),
+                any(Pageable.class)
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenGetUserEmailIsMissing() throws Exception {
+
+        mockMvc.perform(get("/api/tracked-cities/all-tracked")
+                        .param("page", "0")
+                        .param("size", "2"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
     
     //todo : Creer un jeu de test pour le get sur une ville en particulier
 
@@ -128,7 +159,6 @@ class TrackedCityControllerTest {
         );
     }
 
-    //todo : Tester avec a chaque fois une valeur vide ou null pour le delete
     @Test
     void shouldReturnBadRequestWhenDeleteUserEmailIsEmpty() throws Exception {
 
