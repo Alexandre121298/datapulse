@@ -73,7 +73,7 @@ class TrackedCityControllerTest {
                 any(Pageable.class)
         );
     }
-    
+
     @Test
     void shouldReturnBadRequestWhenGetUserEmailIsEmpty() throws Exception {
 
@@ -106,8 +106,7 @@ class TrackedCityControllerTest {
 
         verifyNoInteractions(trackedCityService);
     }
-    
-    //todo : Creer un jeu de test pour le get sur une ville en particulier
+
 
     @Test
     void shouldReturnCreatedWhenCreateTrackedCity() throws Exception {
@@ -136,6 +135,81 @@ class TrackedCityControllerTest {
     }
 
     //todo : Tester avec a chaque fois une valeur vide ou null pour le Create
+
+    @Test
+    void shouldReturnBadRequestWhenCreateCityNameIsEmpty() throws Exception {
+
+        String jsonBody = """
+            {
+                "name": "",
+                "country": "France",
+                "userEmail": "test@test.fr"
+            }
+            """;
+
+        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreateCountryIsEmpty() throws Exception {
+
+        String jsonBody = """
+            {
+                "name": "Lille",
+                "country": "",
+                "userEmail": "test@test.fr"
+            }
+            """;
+
+        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreateUserEmailIsEmpty() throws Exception {
+
+        String jsonBody = """
+            {
+                "name": "Lille",
+                "country": "France",
+                "userEmail": ""
+            }
+            """;
+
+        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreateUserEmailIsMissing() throws Exception {
+
+        String jsonBody = """
+            {
+                "name": "Lille",
+                "country": "France"
+            }
+            """;
+
+        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
 
     @Test
     void shouldDeleteTrackedCity() throws Exception {
