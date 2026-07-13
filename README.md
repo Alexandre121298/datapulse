@@ -3,13 +3,17 @@
 ## MVP
 
 - [x] Initialisation du projet
-- [ ] CRUD des villes
-- [ ] PostgreSQL
-- [ ] OAuth2 Google
+- [x] CRUD des villes
+- [x] Docker
+- [x] Jeu de Tests sur les méthodes mise en place
 - [ ] Appel API météo
-- [ ] Spring Batch
+- [ ] Déploiements PostgreSQL
+- [ ] Déploiement GCP
 - [ ] React
 - [ ] Redux
-- [ ] Docker
 - [ ] CI/CD
-- [ ] Déploiement GCP
+- [ ] Spring Batch
+- [ ] OAuth2 Google
+
+
+
