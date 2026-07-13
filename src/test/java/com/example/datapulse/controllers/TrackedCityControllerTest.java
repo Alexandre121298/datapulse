@@ -154,10 +154,45 @@ class TrackedCityControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenUserEmailIsMissing() throws Exception {
+    void shouldReturnBadRequestWhenDeleteUserEmailIsMissing() throws Exception {
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
                         .param("cityName", "Lille")
+                        .param("cityCountry", "France"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenDeleteCityNameIsEmpty() throws Exception {
+
+        doThrow(new BadRequestException("L'email ne peut pas être vide"))
+                .when(trackedCityService)
+                .deleteTrackedCity(
+                        eq("AutreTest@Test.fr"),
+                        eq(""),
+                        eq("France")
+                );
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("cityName", "")
+                        .param("cityCountry", "France"))
+                .andExpect(status().isBadRequest());
+
+        verify(trackedCityService).deleteTrackedCity(
+                eq("AutreTest@Test.fr"),
+                eq(""),
+                eq("France")
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenDeleteCityNameIsMissing() throws Exception {
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "AutreTest@Test.fr")
                         .param("cityCountry", "France"))
                 .andExpect(status().isBadRequest());
 
