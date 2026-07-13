@@ -167,7 +167,7 @@ class TrackedCityControllerTest {
     @Test
     void shouldReturnBadRequestWhenDeleteCityNameIsEmpty() throws Exception {
 
-        doThrow(new BadRequestException("L'email ne peut pas être vide"))
+        doThrow(new BadRequestException("Le nom de la ville ne peut pas être vide"))
                 .when(trackedCityService)
                 .deleteTrackedCity(
                         eq("AutreTest@Test.fr"),
@@ -194,6 +194,41 @@ class TrackedCityControllerTest {
         mockMvc.perform(delete("/api/tracked-cities/delete")
                         .param("userEmail", "AutreTest@Test.fr")
                         .param("cityCountry", "France"))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(trackedCityService);
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenDeleteCityCountryIsEmpty() throws Exception {
+
+        doThrow(new BadRequestException("Le pays de la ville ne peut pas être vide"))
+                .when(trackedCityService)
+                .deleteTrackedCity(
+                        eq("AutreTest@Test.fr"),
+                        eq("Lille"),
+                        eq("")
+                );
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("cityName", "Lille")
+                        .param("cityCountry", ""))
+                .andExpect(status().isBadRequest());
+
+        verify(trackedCityService).deleteTrackedCity(
+                eq("AutreTest@Test.fr"),
+                eq("Lille"),
+                eq("")
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenDeleteCityCountryIsMissing() throws Exception {
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("cityName", "Lille"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(trackedCityService);
