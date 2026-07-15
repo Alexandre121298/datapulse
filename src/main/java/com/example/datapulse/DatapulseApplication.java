@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 // TODO : Remove the exclude when Postgres will be configured
 @SpringBootApplication(scanBasePackages = {
-		"com.example.datapulse.weather.*",
+		"com.example.datapulse.weather",
 		"com.example.datapulse.common.exception",
-		"com.example.datapulse.config.*"
+		"com.example.datapulse.config"
 })
 public class DatapulseApplication {
 
