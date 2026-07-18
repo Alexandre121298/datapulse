@@ -2,14 +2,47 @@ services:
   postgres:
     image: postgres:16
     container_name: datapulse-postgres
+
     environment:
       POSTGRES_DB: datapulse
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
     ports:
       - "5433:5432"
+
     volumes:
       - datapulse_pg_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d datapulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: datapulse-api
+    container_name: datapulse-api
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      PORT: 8080
+
+      DB_URL: jdbc:postgresql://postgres:5432/datapulse
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 
 volumes:
   datapulse_pg_data:
