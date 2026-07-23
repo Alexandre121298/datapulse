@@ -1,0 +1,49 @@
+.tracked-cities-page {
+  width: min(1200px, 100% - 2rem);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.tracked-cities-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.tracked-cities-page__header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.tracked-cities-page__header p {
+  margin: 0.5rem 0 0;
+  color: #5f6b7a;
+}
+
+.tracked-cities-page__header button {
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.tracked-cities-page__header button:hover {
+  background-color: #1d4ed8;
+}
+
+.tracked-cities-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .tracked-cities-page__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
