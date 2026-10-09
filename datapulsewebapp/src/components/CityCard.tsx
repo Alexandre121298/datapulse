@@ -1,3 +1,4 @@
+
 import type { TrackedCity } from "../types/trackedCity";
 import "./CityCard.css";
 
@@ -13,17 +14,10 @@ function CityCard({ city }: CityCardProps) {
         <span>{city.country}</span>
       </div>
 
-      <div className="city-card__coordinates">
-        <p>
-          <strong>Latitude :</strong> {city.latitude}
-        </p>
-
-        <p>
-          <strong>Longitude :</strong> {city.longitude}
-        </p>
-      </div>
-
-      <button className="city-card__delete-button" type="button">
+      <button
+        className="city-card__delete-button"
+        type="button"
+      >
         Supprimer
       </button>
     </article>

@@ -28,10 +28,6 @@
   font-size: 0.9rem;
 }
 
-.city-card__coordinates p {
-  margin: 0.4rem 0;
-}
-
 .city-card__delete-button {
   align-self: flex-start;
   padding: 0.65rem 1rem;
