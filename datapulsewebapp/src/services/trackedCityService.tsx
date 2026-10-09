@@ -65,3 +65,34 @@ export async function deleteTrackedCity(
     );
   }
 }
+
+
+interface TrackedCitiesResponse {
+  content: TrackedCity[];
+}
+
+export async function getTrackedCities(
+  userEmail: string,
+  signal?: AbortSignal
+): Promise<TrackedCity[]> {
+
+  const params = new URLSearchParams({
+    userEmail,
+    size: "100"
+  });
+
+  const response = await fetch(
+    `/api/tracked-cities/all-tracked?${params}`,
+    { signal }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Erreur lors de la récupération des villes (${response.status})`
+    );
+  }
+
+  const data: TrackedCitiesResponse = await response.json();
+
+  return data.content;
+}

@@ -5,16 +5,13 @@ import type { TrackedCity } from "../types/trackedCity";
 import AddCityForm from "../components/AddCityForm";
 import {
   createTrackedCity,
-  deleteTrackedCity
+  deleteTrackedCity,
+  getTrackedCities
 } from "../services/trackedCityService";
 import "./TrackedCitiesPage.css";
 
 // TODO: Temporaire, en attendant l'authentification
 const USER_EMAIL = "test@test.fr";
-
-interface TrackedCitiesResponse {
-  content: TrackedCity[];
-}
 
 function TrackedCitiesPage() {
   const [trackedCities, setTrackedCities] = useState<TrackedCity[]>([]);
@@ -27,22 +24,12 @@ function TrackedCitiesPage() {
 
     async function loadCities() {
       try {
-        const params = new URLSearchParams({
-          userEmail: USER_EMAIL,
-          size: "100",
-        });
-
-        const response = await fetch(
-          `/api/tracked-cities/all-tracked?${params}`,
-          { signal: controller.signal }
+        const cities = await getTrackedCities(
+          USER_EMAIL,
+          controller.signal
         );
 
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP : ${response.status}`);
-        }
-
-        const data: TrackedCitiesResponse = await response.json();
-        setTrackedCities(data.content);
+        setTrackedCities(cities);
       } catch (err) {
         if (!controller.signal.aborted) {
           console.error(err);
