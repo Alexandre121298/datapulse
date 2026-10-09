@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: datapulseAPI
+
 permissions:
   contents: read
   id-token: write
@@ -52,6 +56,7 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+          cache-dependency-path: datapulseAPI/pom.xml
 
       - name: Make Maven Wrapper executable
         run: chmod +x mvnw
