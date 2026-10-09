@@ -34,3 +34,34 @@ export async function createTrackedCity(
 
   return response.json() as Promise<TrackedCity>;
 }
+
+
+export async function deleteTrackedCity(
+  cityName: string,
+  cityCountry: string,
+  userEmail: string
+): Promise<void> {
+
+  const params = new URLSearchParams({
+    userEmail,
+    cityName,
+    cityCountry,
+  });
+
+  const response = await fetch(
+    `/api/tracked-cities/delete?${params}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (response.status === 404) {
+    throw new Error("Cette ville n'existe plus.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Erreur lors de la suppression (${response.status}).`
+    );
+  }
+}

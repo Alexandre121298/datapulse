@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import CityCard from "../components/CityCard";
 import type { TrackedCity } from "../types/trackedCity";
 import AddCityForm from "../components/AddCityForm";
-import { createTrackedCity } from "../services/trackedCityService";
+import {
+  createTrackedCity,
+  deleteTrackedCity
+} from "../services/trackedCityService";
 import "./TrackedCitiesPage.css";
 
 // TODO: Temporaire, en attendant l'authentification
@@ -72,6 +75,22 @@ function TrackedCitiesPage() {
       setIsAddFormOpen(false);
     }
 
+    
+    async function handleDeleteCity(city: TrackedCity): Promise<void> {
+      await deleteTrackedCity(
+        city.name,
+        city.country,
+        USER_EMAIL
+      );
+
+      setTrackedCities((previousCities) =>
+        previousCities.filter(
+          (trackedCity) => trackedCity.id !== city.id
+        )
+      );
+    }
+
+
   return (
     <main className="tracked-cities-page">
       <header className="tracked-cities-page__header">
@@ -104,7 +123,11 @@ function TrackedCitiesPage() {
         ) : (
           <div className="tracked-cities-page__grid">
             {trackedCities.map((city) => (
-              <CityCard key={city.id} city={city} />
+              <CityCard
+                key={city.id}
+                city={city}
+                onDelete={handleDeleteCity}
+              />
             ))}
           </div>
         )}
