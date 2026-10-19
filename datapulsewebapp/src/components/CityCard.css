@@ -46,3 +46,11 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.city-card__weather {
+  margin: 1rem 0;
+}
+
+.city-card__weather p {
+  margin: 0.4rem 0;
+}

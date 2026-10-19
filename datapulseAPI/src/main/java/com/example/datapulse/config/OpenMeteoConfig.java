@@ -15,4 +15,13 @@ public class OpenMeteoConfig {
                 .baseUrl("https://geocoding-api.open-meteo.com")
                 .build();
     }
+
+    @Bean
+    public RestClient openMeteoWeatherRestClient(
+            RestClient.Builder restClientBuilder
+    ) {
+        return restClientBuilder
+                .baseUrl("https://api.open-meteo.com")
+                .build();
+    }
 }
