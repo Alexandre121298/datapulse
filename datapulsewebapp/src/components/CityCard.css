@@ -54,3 +54,7 @@
 .city-card__weather p {
   margin: 0.4rem 0;
 }
+.city-card__weather .city-card__condition {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}

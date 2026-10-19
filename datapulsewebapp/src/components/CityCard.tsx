@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import type { TrackedCity } from "../types/trackedCity";
 import type { Weather } from "../types/weather";
 import { getCurrentWeather } from "../services/weatherService";
+import { getWeatherDescription } from "../utils/weatherUtils";
 import "./CityCard.css";
 
 interface CityCardProps {
@@ -137,6 +138,10 @@ useEffect(() => {
           <p role="alert">{weatherError}</p>
         ) : weather ? (
           <>
+            <p className="city-card__condition">
+              {getWeatherDescription(weather.weatherCode)}
+            </p>
+
             <p>
               Température :{" "}
               {weather.temperature == null
