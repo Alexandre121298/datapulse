@@ -22,6 +22,12 @@ export async function createTrackedCity(
     }
   );
 
+  if (response.status === 404) {
+    throw new Error(
+      "Aucune ville trouvée pour ce nom et ce pays. Vérifiez votre saisie."
+    );
+  }
+
   if (response.status === 409) {
     throw new Error("Cette ville est déjà suivie.");
   }
