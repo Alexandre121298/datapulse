@@ -42,6 +42,11 @@ function CityCard({ city, onDelete }: CityCardProps) {
         <span>{city.country}</span>
       </div>
 
+      <div className="city-card__coordinates">
+        <p>Latitude : {city.latitude ?? "Non renseignée"}</p>
+        <p>Longitude : {city.longitude ?? "Non renseignée"}</p>
+      </div>
+
       {error && <p role="alert">{error}</p>}
 
       <button

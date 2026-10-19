@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import com.example.datapulse.weather.dto.OpenMeteoGeocodingDTO;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -17,9 +18,14 @@ import java.util.List;
 public class TrackedCityServices {
 
     private final TrackedCityRepository trackedCityRepository;
+    private final OpenMeteoGeocodingServices geocodingServices;
 
-    public TrackedCityServices(TrackedCityRepository trackedCityRepository) {
+    public TrackedCityServices(
+            TrackedCityRepository trackedCityRepository,
+            OpenMeteoGeocodingServices geocodingServices
+    ) {
         this.trackedCityRepository = trackedCityRepository;
+        this.geocodingServices = geocodingServices;
     }
 
 
@@ -94,40 +100,51 @@ public class TrackedCityServices {
                 .build();
     }
 
-    public TrackedCityEntity createTrackedCity(String cityName, String cityCountry, String userEmail) throws BadRequestException {
+    public TrackedCityEntity createTrackedCity(
+            String cityName,
+            String cityCountry,
+            String userEmail
+    ) throws BadRequestException {
 
-        //todo : A supprimer quand l'authentification sera mis en place
-        if(userEmail == null || userEmail.isBlank())
-        {
-            throw new BadRequestException("L'email de l'utilisateur ne peux pas être vide");
+        // TODO : à adapter quand l'authentification sera mise en place.
+        if (userEmail == null || userEmail.isBlank()) {
+            throw new BadRequestException(
+                    "L'email de l'utilisateur ne peut pas être vide"
+            );
         }
 
-        if(cityName == null || cityName.isBlank())
-        {
-            throw new BadRequestException("Le nom de la ville ne peux pas être null ou vide");
+        if (cityName == null || cityName.isBlank()) {
+            throw new BadRequestException(
+                    "Le nom de la ville ne peut pas être null ou vide"
+            );
         }
 
-        if(cityCountry == null || cityCountry.isBlank())
-        {
-            throw new BadRequestException("Le pays de la ville demandée ne peux pas être null ou vide");
+        if (cityCountry == null || cityCountry.isBlank()) {
+            throw new BadRequestException(
+                    "Le pays de la ville ne peut pas être null ou vide"
+            );
         }
 
+        if (trackedCityRepository.existsByUserEmailAndCityNameAndCityCountry(
+                userEmail, cityName, cityCountry
+        )) {
+            throw new ConflictException(
+                    "Cette ville est déjà suivie par cet utilisateur."
+            );
+        }
 
-        //todo : Try/Catch pour gerer si la creation de la ville s'est bien passée ?
+        OpenMeteoGeocodingDTO.OpenMeteoGeocodingResult city =
+                geocodingServices.findCity(cityName, cityCountry);
+
         TrackedCityEntity trackedCityEntity = TrackedCityEntity.builder()
-                                                               .cityName(cityName)
-                                                               .cityCountry(cityCountry)
-                                                               .userEmail(userEmail)
-                                                               .build();
+                .cityName(cityName)
+                .cityCountry(cityCountry)
+                .userEmail(userEmail)
+                .latitude(city.getLatitude())
+                .longitude(city.getLongitude())
+                .build();
 
-        if (trackedCityRepository.existsByUserEmailAndCityNameAndCityCountry(userEmail,cityName,cityCountry)) {
-            throw new ConflictException("Cette ville est déjà suivie par cet utilisateur.");
-        }
-
-        trackedCityRepository.save(trackedCityEntity);
-
-        return trackedCityEntity;
-
+        return trackedCityRepository.save(trackedCityEntity);
     }
 
 

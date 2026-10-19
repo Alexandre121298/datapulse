@@ -74,11 +74,14 @@ public class TrackedCityController {
         TrackedCityEntity trackedCityEntity = trackedCityService.createTrackedCity(input.getName(),input.getCountry(),input.getUserEmail());
 
 
-        TrackedCityDTO.TrackedCityOutput output = TrackedCityDTO.TrackedCityOutput.builder()
-                .id(trackedCityEntity.getId())
-                .name(trackedCityEntity.getCityName())
-                .country(trackedCityEntity.getCityCountry())
-                .build();
+        TrackedCityDTO.TrackedCityOutput output =
+                TrackedCityDTO.TrackedCityOutput.builder()
+                        .id(trackedCityEntity.getId())
+                        .name(trackedCityEntity.getCityName())
+                        .country(trackedCityEntity.getCityCountry())
+                        .latitude(trackedCityEntity.getLatitude())
+                        .longitude(trackedCityEntity.getLongitude())
+                        .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
