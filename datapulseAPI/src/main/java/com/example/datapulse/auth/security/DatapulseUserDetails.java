@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.io.Serial;
 
-public class DatapulseUserDetails extends User {
+public class DatapulseUserDetails extends User implements DatapulsePrincipal {
 
     @Serial
     private static final long serialVersionUID = 1L;

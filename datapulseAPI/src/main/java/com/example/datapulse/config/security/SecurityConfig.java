@@ -1,12 +1,13 @@
 package com.example.datapulse.config.security;
 
+import com.example.datapulse.auth.security.GoogleOidcUserService;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -42,7 +45,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
+    public DaoAuthenticationProvider daoAuthenticationProvider(
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder
     ) {
@@ -51,17 +54,21 @@ public class SecurityConfig {
 
         provider.setPasswordEncoder(passwordEncoder);
 
-        return new ProviderManager(provider);
+        return provider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            AuthenticationManager authenticationManager
+            DaoAuthenticationProvider authenticationProvider,
+            GoogleOidcUserService googleOidcUserService,
+            ObjectProvider<ClientRegistrationRepository> clientRegistrations,
+            @Value("${app.frontend-url:http://localhost:5173}")
+            String frontendUrl
     ) throws Exception {
 
         http
-                .authenticationManager(authenticationManager)
+                .authenticationProvider(authenticationProvider)
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
@@ -75,7 +82,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/auth/register",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/api/oauth2/authorization/**",
+                                "/login/oauth2/code/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -122,6 +131,32 @@ public class SecurityConfig {
                 )
 
                 .httpBasic(AbstractHttpConfigurer::disable);
+
+        if (clientRegistrations.getIfAvailable() != null) {
+            http.oauth2Login(oauth -> oauth
+                    .authorizationEndpoint(authorization -> authorization
+                            .baseUri("/api/oauth2/authorization")
+                    )
+                    .userInfoEndpoint(userInfo -> userInfo
+                            .oidcUserService(googleOidcUserService)
+                    )
+                    .defaultSuccessUrl(frontendUrl, true)
+                    .failureHandler((request, response, exception) -> {
+                        String error = "google";
+
+                        if (exception instanceof OAuth2AuthenticationException oauthException
+                                && "email_already_registered".equals(
+                                oauthException.getError().getErrorCode()
+                        )) {
+                            error = "account_exists";
+                        }
+
+                        response.sendRedirect(
+                                frontendUrl + "?authError=" + error
+                        );
+                    })
+            );
+        }
 
         return http.build();
     }

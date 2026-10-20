@@ -1,4 +1,5 @@
 import type { Weather } from "../types/weather";
+import { apiFetch } from "./apiClient";
 
 export async function getCurrentWeather(
   latitude: number,
@@ -10,7 +11,7 @@ export async function getCurrentWeather(
     longitude: String(longitude),
   });
 
-  const response = await fetch(
+  const response = await apiFetch(
     `/api/weather/current?${params}`,
     { signal }
   );

@@ -1,7 +1,7 @@
 package com.example.datapulse.auth.controllers;
 
 import com.example.datapulse.auth.dto.AuthDTO;
-import com.example.datapulse.auth.security.DatapulseUserDetails;
+import com.example.datapulse.auth.security.DatapulsePrincipal;
 import com.example.datapulse.auth.services.RegistrationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -41,9 +41,10 @@ public class AuthController {
         );
     }
 
+
     @GetMapping("/me")
     public AuthDTO.UserResponse me(
-            @AuthenticationPrincipal DatapulseUserDetails user
+            @AuthenticationPrincipal DatapulsePrincipal user
     ) {
         return new AuthDTO.UserResponse(
                 user.getId(),
