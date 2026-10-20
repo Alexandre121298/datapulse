@@ -5,19 +5,16 @@ import com.example.datapulse.weather.models.TrackedCityEntity;
 import com.example.datapulse.weather.services.TrackedCityServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Pageable;
-import java.util.List;
-
-@Slf4j
 @RestController
 @RequestMapping("/api/tracked-cities")
 public class TrackedCityController {
@@ -28,85 +25,82 @@ public class TrackedCityController {
         this.trackedCityService = trackedCityService;
     }
 
-    @Operation(summary = "Lister la totalité des villes suivies par l'utilisateur")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Toutes les villes sont retournées"),
-            @ApiResponse(responseCode = "400", description = "Requête invalide"),
-    })
+    @Operation(summary = "Lister les villes du compte connecté")
     @GetMapping("/all-tracked")
-    public ResponseEntity<Page<TrackedCityDTO.TrackedCityOutput>> getAllTrackedCitiesByUser(@RequestParam String userEmail, Pageable pageable) throws BadRequestException {
+    public ResponseEntity<Page<TrackedCityDTO.TrackedCityOutput>>
+    getAllTrackedCitiesByUser(
+            @AuthenticationPrincipal UserDetails user,
+            Pageable pageable
+    ) throws BadRequestException {
 
-        log.info("L'Email utilisateur reçu : "+ userEmail);
-
-        return ResponseEntity.ok(trackedCityService.getAllTrackedCitiesByUser(userEmail,pageable));
+        return ResponseEntity.ok(
+                trackedCityService.getAllTrackedCitiesByUser(
+                        user.getUsername(),
+                        pageable
+                )
+        );
     }
 
-    @Operation(summary = "Retourner une ville spécifique suivie par l'utilisateur")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "La ville demandée est retournée"),
-            @ApiResponse(responseCode = "400", description = "Requête invalide"),
-    })
-    @GetMapping("city")
-    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> getTrackedCityByUser(
-            @Valid @RequestParam String userEmail,
-            @Valid @RequestParam String cityName,
-            @Valid @RequestParam String cityCountry) throws BadRequestException {
-        log.info("L'Email utilisateur reçu :"+userEmail);
-        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+cityName);
-        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+cityCountry);
+    @Operation(summary = "Retourner une ville du compte connecté")
+    @GetMapping("/city")
+    public ResponseEntity<TrackedCityDTO.TrackedCityOutput>
+    getTrackedCityByUser(
+            @AuthenticationPrincipal UserDetails user,
+            @RequestParam String cityName,
+            @RequestParam String cityCountry
+    ) throws BadRequestException {
 
-        return ResponseEntity.ok(trackedCityService.getTrackedCityByUser(userEmail,cityName,cityCountry));
+        return ResponseEntity.ok(
+                trackedCityService.getTrackedCityByUser(
+                        user.getUsername(),
+                        cityName,
+                        cityCountry
+                )
+        );
     }
 
-    @Operation(summary = "Créer une ville suivie")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Ville suivie créée"),
-            @ApiResponse(responseCode = "400", description = "Requête invalide"),
-            @ApiResponse(responseCode = "409", description = "Ville déjà suivie")
-    })
+    @Operation(summary = "Ajouter une ville au compte connecté")
+    @ApiResponse(responseCode = "201", description = "Ville suivie créée")
     @PostMapping("/create-tracked-city")
-    public ResponseEntity<TrackedCityDTO.TrackedCityOutput> createTrackedCity(@Valid @RequestBody TrackedCityDTO.TrackedCityInput input) throws BadRequestException {
+    public ResponseEntity<TrackedCityDTO.TrackedCityOutput>
+    createTrackedCity(
+            @AuthenticationPrincipal UserDetails user,
+            @Valid @RequestBody TrackedCityDTO.TrackedCityInput input
+    ) throws BadRequestException {
 
-        log.info("L'Email utilisateur reçu :"+input.getUserEmail());
-        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+input.getName());
-        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+input.getCountry());
-
-        TrackedCityEntity trackedCityEntity = trackedCityService.createTrackedCity(input.getName(),input.getCountry(),input.getUserEmail());
-
+        TrackedCityEntity city = trackedCityService.createTrackedCity(
+                input.getName(),
+                input.getCountry(),
+                user.getUsername()
+        );
 
         TrackedCityDTO.TrackedCityOutput output =
-                TrackedCityDTO.TrackedCityOutput.builder()
-                        .id(trackedCityEntity.getId())
-                        .name(trackedCityEntity.getCityName())
-                        .country(trackedCityEntity.getCityCountry())
-                        .latitude(trackedCityEntity.getLatitude())
-                        .longitude(trackedCityEntity.getLongitude())
-                        .build();
+                new TrackedCityDTO.TrackedCityOutput(
+                        city.getId(),
+                        city.getCityName(),
+                        city.getCityCountry(),
+                        city.getLatitude(),
+                        city.getLongitude()
+                );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
-    @Operation(summary = "Supprimer une ville suivie")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "La ville a été supprimé"),
-            @ApiResponse(responseCode = "400", description = "Requête invalide"),
-    })
+    @Operation(summary = "Supprimer une ville du compte connecté")
+    @ApiResponse(responseCode = "204", description = "Ville supprimée")
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteTrackedCity(
-              @Valid @RequestParam String userEmail,
-              @Valid @RequestParam String cityName,
-              @Valid @RequestParam String cityCountry) throws BadRequestException {
+            @AuthenticationPrincipal UserDetails user,
+            @RequestParam String cityName,
+            @RequestParam String cityCountry
+    ) throws BadRequestException {
 
-        log.info("L'Email utilisateur reçu :"+userEmail);
-        log.info("Le nom de la ville demandée et suivi par l'utilisateur :"+cityName);
-        log.info("Le pays de la ville suivie demandée par l'utilisateur :"+cityCountry);
-
-        trackedCityService.deleteTrackedCity(userEmail,cityName,cityCountry);
-
-        log.info("La ville a bien été supprimé !");
+        trackedCityService.deleteTrackedCity(
+                user.getUsername(),
+                cityName,
+                cityCountry
+        );
 
         return ResponseEntity.noContent().build();
     }
-
-
 }

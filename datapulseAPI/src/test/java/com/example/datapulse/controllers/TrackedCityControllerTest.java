@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(TrackedCityController.class)
+@WithMockUser(username = "test@test.fr")
 class TrackedCityControllerTest {
 
     @Autowired
@@ -74,39 +76,6 @@ class TrackedCityControllerTest {
         );
     }
 
-    @Test
-    void shouldReturnBadRequestWhenGetUserEmailIsEmpty() throws Exception {
-
-        doThrow(new BadRequestException("L'email ne peut pas être vide"))
-                .when(trackedCityService)
-                .getAllTrackedCitiesByUser(
-                        eq(""),
-                        any(Pageable.class)
-                );
-
-        mockMvc.perform(get("/api/tracked-cities/all-tracked")
-                        .param("userEmail", "")
-                        .param("page", "0")
-                        .param("size", "2"))
-                .andExpect(status().isBadRequest());
-
-        verify(trackedCityService).getAllTrackedCitiesByUser(
-                eq(""),
-                any(Pageable.class)
-        );
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenGetUserEmailIsMissing() throws Exception {
-
-        mockMvc.perform(get("/api/tracked-cities/all-tracked")
-                        .param("page", "0")
-                        .param("size", "2"))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(trackedCityService);
-    }
-
 
     @Test
     void shouldReturnCreatedWhenCreateTrackedCity() throws Exception {
@@ -116,14 +85,14 @@ class TrackedCityControllerTest {
         when(trackedCityService.createTrackedCity(
                 eq("Lille"),
                 eq("France"),
-                eq("AutreTest@Test.fr")
+                eq("test@test.fr")
         )).thenReturn(TrackedCityEntity);
 
         String jsonBody = """
             {
                 "name": "Lille",
                 "country": "France",
-                "userEmail": "AutreTest@Test.fr"
+                "userEmail": "test@test.fr"
             }
             """;
 
@@ -174,99 +143,29 @@ class TrackedCityControllerTest {
         verifyNoInteractions(trackedCityService);
     }
 
-    @Test
-    void shouldReturnBadRequestWhenCreateUserEmailIsEmpty() throws Exception {
-
-        String jsonBody = """
-            {
-                "name": "Lille",
-                "country": "France",
-                "userEmail": ""
-            }
-            """;
-
-        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
-                        .contentType("application/json")
-                        .content(jsonBody))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(trackedCityService);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenCreateUserEmailIsMissing() throws Exception {
-
-        String jsonBody = """
-            {
-                "name": "Lille",
-                "country": "France"
-            }
-            """;
-
-        mockMvc.perform(post("/api/tracked-cities/create-tracked-city")
-                        .contentType("application/json")
-                        .content(jsonBody))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(trackedCityService);
-    }
 
     @Test
     void shouldDeleteTrackedCity() throws Exception {
 
         doNothing().when(trackedCityService).deleteTrackedCity(
-                eq("AutreTest@Test.fr"),
+                eq("test@test.fr"),
                 eq("Lille"),
                 eq("France")
         );
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("userEmail", "test@test.fr")
                         .param("cityName", "Lille")
                         .param("cityCountry", "France"))
                 .andExpect(status().isNoContent());
 
         verify(trackedCityService).deleteTrackedCity(
-                eq("AutreTest@Test.fr"),
+                eq("test@test.fr"),
                 eq("Lille"),
                 eq("France")
         );
     }
 
-    @Test
-    void shouldReturnBadRequestWhenDeleteUserEmailIsEmpty() throws Exception {
-
-        doThrow(new BadRequestException("L'email ne peut pas être vide"))
-                .when(trackedCityService)
-                .deleteTrackedCity(
-                        eq(""),
-                        eq("Lille"),
-                        eq("France")
-                );
-
-        mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "")
-                        .param("cityName", "Lille")
-                        .param("cityCountry", "France"))
-                .andExpect(status().isBadRequest());
-
-        verify(trackedCityService).deleteTrackedCity(
-                eq(""),
-                eq("Lille"),
-                eq("France")
-        );
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenDeleteUserEmailIsMissing() throws Exception {
-
-        mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("cityName", "Lille")
-                        .param("cityCountry", "France"))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(trackedCityService);
-    }
 
     @Test
     void shouldReturnBadRequestWhenDeleteCityNameIsEmpty() throws Exception {
@@ -274,19 +173,19 @@ class TrackedCityControllerTest {
         doThrow(new BadRequestException("Le nom de la ville ne peut pas être vide"))
                 .when(trackedCityService)
                 .deleteTrackedCity(
-                        eq("AutreTest@Test.fr"),
+                        eq("test@test.fr"),
                         eq(""),
                         eq("France")
                 );
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("userEmail", "test@test.fr")
                         .param("cityName", "")
                         .param("cityCountry", "France"))
                 .andExpect(status().isBadRequest());
 
         verify(trackedCityService).deleteTrackedCity(
-                eq("AutreTest@Test.fr"),
+                eq("test@test.fr"),
                 eq(""),
                 eq("France")
         );
@@ -296,7 +195,7 @@ class TrackedCityControllerTest {
     void shouldReturnBadRequestWhenDeleteCityNameIsMissing() throws Exception {
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("userEmail", "test@test.fr")
                         .param("cityCountry", "France"))
                 .andExpect(status().isBadRequest());
 
@@ -309,19 +208,19 @@ class TrackedCityControllerTest {
         doThrow(new BadRequestException("Le pays de la ville ne peut pas être vide"))
                 .when(trackedCityService)
                 .deleteTrackedCity(
-                        eq("AutreTest@Test.fr"),
+                        eq("test@test.fr"),
                         eq("Lille"),
                         eq("")
                 );
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("userEmail", "test@test.fr")
                         .param("cityName", "Lille")
                         .param("cityCountry", ""))
                 .andExpect(status().isBadRequest());
 
         verify(trackedCityService).deleteTrackedCity(
-                eq("AutreTest@Test.fr"),
+                eq("test@test.fr"),
                 eq("Lille"),
                 eq("")
         );
@@ -331,10 +230,46 @@ class TrackedCityControllerTest {
     void shouldReturnBadRequestWhenDeleteCityCountryIsMissing() throws Exception {
 
         mockMvc.perform(delete("/api/tracked-cities/delete")
-                        .param("userEmail", "AutreTest@Test.fr")
+                        .param("userEmail", "test@test.fr")
                         .param("cityName", "Lille"))
                 .andExpect(status().isBadRequest());
 
         verifyNoInteractions(trackedCityService);
     }
+
+    @Test
+    void shouldUseConnectedUserWhenAnotherEmailIsProvided() throws Exception {
+
+        when(trackedCityService.getAllTrackedCitiesByUser(
+                eq("test@test.fr"),
+                any(Pageable.class)
+        )).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/tracked-cities/all-tracked")
+                        .param("userEmail", "autre@example.com"))
+                .andExpect(status().isOk());
+
+        verify(trackedCityService).getAllTrackedCitiesByUser(
+                eq("test@test.fr"),
+                any(Pageable.class)
+        );
+    }
+
+    @Test
+    void shouldDeleteOnlyForConnectedUserWhenAnotherEmailIsProvided()
+            throws Exception {
+
+        mockMvc.perform(delete("/api/tracked-cities/delete")
+                        .param("userEmail", "autre@example.com")
+                        .param("cityName", "Lille")
+                        .param("cityCountry", "France"))
+                .andExpect(status().isNoContent());
+
+        verify(trackedCityService).deleteTrackedCity(
+                "test@test.fr",
+                "Lille",
+                "France"
+        );
+    }
+
 }

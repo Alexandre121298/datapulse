@@ -1,30 +1,24 @@
-
 import type { TrackedCity } from "../types/trackedCity";
+import { apiFetch, readErrorMessage } from "./apiClient";
 
 export async function createTrackedCity(
   name: string,
-  country: string,
-  userEmail: string
+  country: string
 ): Promise<TrackedCity> {
-
-  const response = await fetch(
+  const response = await apiFetch(
     "/api/tracked-cities/create-tracked-city",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        country,
-        userEmail,
-      }),
+      body: JSON.stringify({ name, country }),
     }
   );
 
   if (response.status === 404) {
     throw new Error(
-      "Aucune ville trouvée pour ce nom et ce pays. Vérifiez votre saisie."
+      "Aucune ville trouvée pour ce nom et ce pays."
     );
   }
 
@@ -34,71 +28,61 @@ export async function createTrackedCity(
 
   if (!response.ok) {
     throw new Error(
-      `Erreur lors de l'ajout de la ville (${response.status}).`
+      await readErrorMessage(
+        response,
+        "Impossible d’ajouter la ville."
+      )
     );
   }
 
-  return response.json() as Promise<TrackedCity>;
+  return (await response.json()) as TrackedCity;
 }
-
 
 export async function deleteTrackedCity(
   cityName: string,
-  cityCountry: string,
-  userEmail: string
+  cityCountry: string
 ): Promise<void> {
-
   const params = new URLSearchParams({
-    userEmail,
     cityName,
     cityCountry,
   });
 
-  const response = await fetch(
+  const response = await apiFetch(
     `/api/tracked-cities/delete?${params}`,
-    {
-      method: "DELETE",
-    }
+    { method: "DELETE" }
   );
 
   if (response.status === 404) {
-    throw new Error("Cette ville n'existe plus.");
+    throw new Error("Cette ville n’existe plus.");
   }
 
   if (!response.ok) {
     throw new Error(
-      `Erreur lors de la suppression (${response.status}).`
+      await readErrorMessage(
+        response,
+        "Impossible de supprimer la ville."
+      )
     );
   }
 }
-
 
 interface TrackedCitiesResponse {
   content: TrackedCity[];
 }
 
 export async function getTrackedCities(
-  userEmail: string,
   signal?: AbortSignal
 ): Promise<TrackedCity[]> {
-
-  const params = new URLSearchParams({
-    userEmail,
-    size: "100"
-  });
-
-  const response = await fetch(
-    `/api/tracked-cities/all-tracked?${params}`,
+  const response = await apiFetch(
+    "/api/tracked-cities/all-tracked?size=100",
     { signal }
   );
 
   if (!response.ok) {
-    throw new Error(
-      `Erreur lors de la récupération des villes (${response.status})`
-    );
+    throw new Error("Impossible de récupérer les villes.");
   }
 
-  const data: TrackedCitiesResponse = await response.json();
+  const data = (await response.json()) as TrackedCitiesResponse;
 
   return data.content;
 }
