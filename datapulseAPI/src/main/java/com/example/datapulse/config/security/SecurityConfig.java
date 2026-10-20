@@ -72,19 +72,26 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
+
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/auth/csrf",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/oauth2/authorization/**",
+                                "/login/oauth2/code/**",
+                                "/",
+                                "/index.html",
+                                "/assets/**",
+                                "/favicon.svg",
+                                "/favicon.ico"
                         ).permitAll()
+
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/oauth2/authorization/**",
-                                "/login/oauth2/code/**"
+                                "/api/auth/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
