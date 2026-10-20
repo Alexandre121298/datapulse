@@ -10,8 +10,7 @@ import {
 } from "../services/trackedCityService";
 import "./TrackedCitiesPage.css";
 
-// TODO: Temporaire, en attendant l'authentification
-const USER_EMAIL = "test@test.fr";
+
 
 function TrackedCitiesPage() {
   const [trackedCities, setTrackedCities] = useState<TrackedCity[]>([]);
@@ -24,10 +23,7 @@ function TrackedCitiesPage() {
 
     async function loadCities() {
       try {
-        const cities = await getTrackedCities(
-          USER_EMAIL,
-          controller.signal
-        );
+        const cities = await getTrackedCities(controller.signal);
 
         setTrackedCities(cities);
       } catch (err) {
@@ -48,11 +44,7 @@ function TrackedCitiesPage() {
   }, []);
 
       async function handleAddCity(name: string, country: string) {
-      const newCity = await createTrackedCity(
-        name,
-        country,
-        USER_EMAIL
-      );
+      const newCity = await createTrackedCity(name, country);
 
       setTrackedCities((previousCities) => [
         ...previousCities,
@@ -64,11 +56,7 @@ function TrackedCitiesPage() {
 
     
     async function handleDeleteCity(city: TrackedCity): Promise<void> {
-      await deleteTrackedCity(
-        city.name,
-        city.country,
-        USER_EMAIL
-      );
+      await deleteTrackedCity(city.name, city.country);
 
       setTrackedCities((previousCities) =>
         previousCities.filter(

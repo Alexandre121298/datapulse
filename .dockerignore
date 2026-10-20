@@ -1,0 +1,10 @@
+.git
+**/node_modules
+**/dist
+**/target
+**/.idea
+**/.vscode
+**/.env
+**/.env.*
+**/gha-creds-*.json
+**/*.log
