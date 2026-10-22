@@ -6,6 +6,7 @@ import { getCurrentUser, login, logout, register } from "./services/authService"
 import { SESSION_EXPIRED_EVENT } from "./services/apiClient";
 import type { AuthUser } from "./types/auth";
 import AppHeader from "./components/AppHeader";
+import AuthLayout from "./components/AuthLayout";
 import "./App.css";
 
 function getGoogleLoginError(): string | null {
@@ -144,47 +145,52 @@ function App() {
     );
   }
 
-  if (user === null) {
-    return (
-      <main className="auth-page">
-        {sessionError && (
-          <p className="session-error" role="alert">
-            {sessionError}
-          </p>
-        )}
+if (user === null) {
+  return (
+    <AuthLayout>
+      {sessionError && (
+        <p className="session-error" role="alert">
+          {sessionError}
+        </p>
+      )}
 
-        {registrationMessage && (
-          <p className="registration-message" role="status">
-            {registrationMessage}
-          </p>
-        )}
+      {registrationMessage && (
+        <p className="registration-message" role="status">
+          {registrationMessage}
+        </p>
+      )}
 
-        {isRegistering ? (
-          <RegisterForm onRegister={handleRegister} />
-        ) : (
-          <LoginForm onLogin={handleLogin} />
-        )}
+      {isRegistering ? (
+        <RegisterForm onRegister={handleRegister} />
+      ) : (
+        <LoginForm onLogin={handleLogin} />
+      )}
 
-        <a className="google-login" href="/api/oauth2/authorization/google">
-          Continuer avec Google
-        </a>
+      <div className="auth-layout__divider">ou</div>
 
-        <button
-          type="button"
-          className="auth-switch"
-          onClick={() => {
-            setIsRegistering((previous) => !previous);
-            setSessionError(null);
-            setRegistrationMessage(null);
-          }}
-        >
-          {isRegistering
-            ? "J’ai déjà un compte : me connecter"
-            : "Créer un compte"}
-        </button>
-      </main>
-    );
-  }
+      <a
+        className="google-login"
+        href="/api/oauth2/authorization/google"
+      >
+        Continuer avec Google
+      </a>
+
+      <button
+        type="button"
+        className="auth-switch"
+        onClick={() => {
+          setIsRegistering((previous) => !previous);
+          setSessionError(null);
+          setRegistrationMessage(null);
+        }}
+      >
+        {isRegistering
+          ? "J’ai déjà un compte : me connecter"
+          : "Créer un compte"}
+      </button>
+    </AuthLayout>
+  );
+}
 
   
 

@@ -42,7 +42,7 @@ function RegisterForm({ onRegister }: RegisterFormProps) {
       onSubmit={handleSubmit}
       aria-busy={isSubmitting}
     >
-      <h1>Créer un compte DataPulse</h1>
+      <h1>Créer votre compte</h1>
       <p>Retrouvez vos villes dans votre espace personnel.</p>
 
       <div className="login-form__field">
