@@ -11,31 +11,6 @@
   padding: 24px;
 }
 
-.account-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px 24px;
-}
-
-.account-bar button {
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 6px;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-
-.account-bar button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
 .session-status {
   padding: 32px;
   text-align: center;
@@ -86,4 +61,14 @@
 .google-login:focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 3px;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+.app-shell__error {
+  max-width: var(--content-width);
+  margin: 16px auto 0;
 }

@@ -70,11 +70,24 @@ function TrackedCitiesPage() {
     <main className="tracked-cities-page">
       <header className="tracked-cities-page__header">
         <div>
-          <h1>DataPulse</h1>
-          <p>Suivez la météo de vos villes préférées.</p>
+          <p className="tracked-cities-page__eyebrow">
+            Votre espace météo
+          </p>
+
+          <h1>La météo de vos villes.</h1>
+
+          <p className="tracked-cities-page__intro">
+            Retrouvez les conditions actuelles des lieux qui comptent pour vous.
+          </p>
         </div>
 
-        <button type="button" onClick={() => setIsAddFormOpen(true)}>
+        <button
+          className="tracked-cities-page__add-button"
+          type="button"
+          onClick={() => setIsAddFormOpen(true)}
+          disabled={isAddFormOpen}
+        >
+          <span aria-hidden="true">+</span>
           Ajouter une ville
         </button>
       </header>

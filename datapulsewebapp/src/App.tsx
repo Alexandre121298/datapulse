@@ -5,6 +5,7 @@ import TrackedCitiesPage from "./pages/TrackedCitiesPage";
 import { getCurrentUser, login, logout, register } from "./services/authService";
 import { SESSION_EXPIRED_EVENT } from "./services/apiClient";
 import type { AuthUser } from "./types/auth";
+import AppHeader from "./components/AppHeader";
 import "./App.css";
 
 function getGoogleLoginError(): string | null {
@@ -188,27 +189,21 @@ function App() {
   
 
   return (
-    <>
-      <div className="account-bar">
-        <span>Connecté avec {user.email}</span>
-
-        <button
-          type="button"
-          onClick={() => void handleLogout()}
-          disabled={isLoggingOut}
-        >
-          {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
-        </button>
-      </div>
+    <div className="app-shell">
+      <AppHeader
+        email={user.email}
+        isLoggingOut={isLoggingOut}
+        onLogout={handleLogout}
+      />
 
       {sessionError && (
-        <p className="session-error" role="alert">
+        <p className="session-error app-shell__error" role="alert">
           {sessionError}
         </p>
       )}
 
       <TrackedCitiesPage key={user.id} />
-    </>
+    </div>
   );
 }
 

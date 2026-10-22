@@ -1,60 +1,181 @@
 .city-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
-  border: 1px solid #dce3ed;
-  border-radius: 12px;
-  background-color: white;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+  gap: 24px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
 }
 
 .city-card__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 16px;
 }
 
-.city-card__header h2 {
+.city-card__title {
   margin: 0;
-  font-size: 1.4rem;
+  color: var(--color-text);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
 }
 
-.city-card__header span {
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  background-color: #e8f0fe;
-  font-size: 0.9rem;
+.city-card__country {
+  margin: 5px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
 }
 
 .city-card__delete-button {
-  align-self: flex-start;
-  padding: 0.65rem 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #dc3545;
-  color: white;
-  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: transparent;
+  color: var(--color-text-muted);
 }
 
-.city-card__delete-button:hover {
-  background-color: #b92d3a;
+.city-card__delete-button:hover:not(:disabled) {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #b91c1c;
 }
 
 .city-card__delete-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .city-card__weather {
-  margin: 1rem 0;
+  flex: 1;
+  min-height: 210px;
 }
 
-.city-card__weather p {
-  margin: 0.4rem 0;
+.city-card__weather-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
-.city-card__weather .city-card__condition {
+
+.city-card__temperature {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(3rem, 5vw, 3.75rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.city-card__temperature-unit {
+  color: var(--color-text-muted);
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.city-card__condition {
+  margin: 10px 0 0;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.city-card__weather-symbol {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #647b98;
+}
+
+.city-card__weather-symbol svg {
+  width: 64px;
+  height: 64px;
+  stroke-width: 1.5;
+}
+
+.city-card__weather-symbol .city-card__sun {
+  color: #c68112;
+}
+
+.city-card__feels-like {
+  margin: 14px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.city-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 24px 0 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--color-background);
+}
+
+.city-card__stats > div {
+  min-width: 0;
+}
+
+.city-card__stats dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.city-card__stats dd {
+  margin: 8px 0 0;
+  color: var(--color-text);
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.city-card__state {
+  display: grid;
+  place-items: center;
+  min-height: 210px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.city-card__error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+.city-card__spinner {
+  animation: city-card-spin 1s linear infinite;
+}
+
+@keyframes city-card-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city-card__spinner {
+    animation: none;
+  }
 }

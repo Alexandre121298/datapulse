@@ -38,6 +38,10 @@ function AddCityForm({ onCancel, onAddCity }: AddCityFormProps) {
     <form className="add-city-form" onSubmit={handleSubmit}>
         <h2>Ajouter une ville</h2>
 
+        <p className="add-city-form__description">
+            Indiquez une ville et son pays pour retrouver sa météo dans votre espace.
+        </p>
+
         <div className="add-city-form__field">
             <label htmlFor="cityName">Nom de la ville</label>
             <input
