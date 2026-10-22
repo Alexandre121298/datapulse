@@ -20,7 +20,8 @@ function TrackedCitiesPage() {
   const [error, setError] = useState<string | null>(null);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
 
-  const [selectedCityId, setSelectedCityId] = useState<number | null>(null);
+  const [selectedCityId, setSelectedCityId] =
+    useState<number | null>(null);
 
   const getWeatherState = useCitiesWeather(trackedCities);
 

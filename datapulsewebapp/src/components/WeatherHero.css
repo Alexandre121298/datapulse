@@ -337,3 +337,105 @@
     display: none;
   }
 }
+
+.weather-hero--night {
+  background-color: #25345d;
+}
+
+.weather-hero--night.weather-hero--rain,
+.weather-hero--night.weather-hero--storm {
+  background-color: #1b253f;
+}
+
+.weather-hero__orb {
+  position: absolute;
+  top: 58px;
+  right: 14%;
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: weather-orb-float 9s ease-in-out infinite;
+  transition:
+    opacity 800ms ease,
+    background-color 800ms ease,
+    box-shadow 800ms ease;
+}
+
+.weather-hero--day .weather-hero__orb {
+  background-color: #ffe3a1;
+  box-shadow:
+    0 0 0 18px rgb(255 235 186 / 10%),
+    0 0 0 42px rgb(255 235 186 / 6%),
+    0 0 70px rgb(255 235 186 / 35%);
+  opacity: 1;
+}
+
+.weather-hero--night .weather-hero__orb {
+  width: 76px;
+  height: 76px;
+  background-color: #eef1ff;
+  box-shadow:
+    0 0 0 16px rgb(224 230 255 / 5%),
+    0 0 60px rgb(224 230 255 / 20%);
+  opacity: 1;
+}
+
+.weather-hero--clear .weather-hero__cloud {
+  opacity: 0;
+}
+
+.weather-hero--night .weather-hero__cloud {
+  background-color: #b4bdd9;
+}
+
+.weather-hero__stars {
+  position: absolute;
+  top: 25px;
+  right: 3%;
+  width: 45%;
+  height: 190px;
+  background-image:
+    radial-gradient(circle at 12% 18%, #e5eaff 1px, transparent 2px),
+    radial-gradient(circle at 38% 35%, #e5eaff 1px, transparent 2px),
+    radial-gradient(circle at 68% 12%, #e5eaff 1px, transparent 2px),
+    radial-gradient(circle at 85% 55%, #e5eaff 1px, transparent 2px),
+    radial-gradient(circle at 20% 80%, #e5eaff 1px, transparent 2px),
+    radial-gradient(circle at 55% 72%, #e5eaff 1px, transparent 2px);
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+
+.weather-hero--night.weather-hero--clear .weather-hero__stars {
+  opacity: 0.8;
+}
+
+.weather-hero--paused .weather-hero__orb {
+  animation-play-state: paused;
+}
+
+@keyframes weather-orb-float {
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 600px) {
+  .weather-hero .weather-hero__orb {
+    top: 110px;
+    right: 8%;
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-hero .weather-hero__orb {
+    animation: none;
+    transition: none;
+  }
+
+  .weather-hero .weather-hero__stars {
+    transition: none;
+  }
+}

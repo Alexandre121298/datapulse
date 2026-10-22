@@ -6,4 +6,5 @@ export interface Weather {
   humidity: number | null;
   windSpeed: number | null;
   weatherCode: number | null;
+  isDay: boolean | null;
 }

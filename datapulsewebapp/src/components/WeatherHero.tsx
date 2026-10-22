@@ -54,19 +54,36 @@ function WeatherHero({ city, weatherState }: WeatherHeroProps) {
     !isLoading && !error ? weather?.weatherCode ?? null : null
   );
 
+  const period =
+  isLoading || error || !weather
+    ? "unknown"
+    : weather.isDay === true
+      ? "day"
+      : weather.isDay === false
+        ? "night"
+        : "unknown";
+
   return (
     <section
       className={[
         "weather-hero",
         `weather-hero--${scene}`,
+        `weather-hero--${period}`,
         isPaused ? "weather-hero--paused" : "",
       ].join(" ")}
       aria-labelledby="weather-hero-title"
       aria-busy={isLoading}
     >
       <div className="weather-hero__sky" aria-hidden="true">
+        {weather && [0, 1, 2].includes(weather.weatherCode ?? -1) && (
+          <span className="weather-hero__orb" />
+        )}
+
+        <span className="weather-hero__stars" />
+
         <span className="weather-hero__cloud weather-hero__cloud--first" />
         <span className="weather-hero__cloud weather-hero__cloud--second" />
+
         <span className="weather-hero__precipitation" />
         <span className="weather-hero__horizon" />
       </div>

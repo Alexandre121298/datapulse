@@ -40,5 +40,8 @@ public class OpenMeteoWeatherDTO {
 
         @JsonProperty("weather_code")
         private Integer weatherCode;
+
+        @JsonProperty("is_day")
+        private Integer isDay;
     }
 }

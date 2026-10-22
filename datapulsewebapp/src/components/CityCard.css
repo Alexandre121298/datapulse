@@ -219,3 +219,7 @@
     transform: none;
   }
 }
+
+.city-card__weather-symbol .city-card__moon {
+  color: #7864b8;
+}

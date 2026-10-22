@@ -11,6 +11,8 @@ import {
   CloudRain,
   CloudSnow,
   CloudSun,
+  CloudMoon,
+  Moon,
   LoaderCircle,
   Sun,
   Trash,
@@ -41,15 +43,34 @@ function formatWeatherValue(
   return unit ? `${formattedValue} ${unit}` : formattedValue;
 }
 
-function getWeatherIcon(code: number | null) {
+function getWeatherIcon(
+  code: number | null,
+  isDay: boolean | null
+) {
   if (code == null) return null;
 
   if (code === 0 || code === 1) {
-    return <Sun className="city-card__sun" />;
+    if (isDay === false) {
+      return <Moon className="city-card__moon" />;
+    }
+
+    if (isDay === true) {
+      return <Sun className="city-card__sun" />;
+    }
+
+    return null;
   }
 
   if (code === 2) {
-    return <CloudSun className="city-card__sun" />;
+    if (isDay === false) {
+      return <CloudMoon className="city-card__moon" />;
+    }
+
+    if (isDay === true) {
+      return <CloudSun className="city-card__sun" />;
+    }
+
+    return <Cloud />;
   }
 
   if (code === 3) return <Cloud />;
@@ -132,7 +153,10 @@ function CityCard({
               className="city-card__weather-symbol"
               aria-hidden="true"
             >
-              {getWeatherIcon(weather?.weatherCode ?? null)}
+              {getWeatherIcon(
+                weather?.weatherCode ?? null,
+                weather?.isDay ?? null
+              )}
             </span>
 
             <span

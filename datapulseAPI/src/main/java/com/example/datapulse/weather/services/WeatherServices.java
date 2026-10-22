@@ -72,6 +72,11 @@ public class WeatherServices {
                 .humidity(current.getHumidity())
                 .windSpeed(current.getWindSpeed())
                 .weatherCode(current.getWeatherCode())
+                .isDay(
+                        current.getIsDay() == null
+                                ? null
+                                : current.getIsDay() == 1
+                )
                 .build();
     }
 }

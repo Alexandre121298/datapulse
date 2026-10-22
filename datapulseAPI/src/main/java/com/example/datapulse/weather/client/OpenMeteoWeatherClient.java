@@ -29,7 +29,7 @@ public class OpenMeteoWeatherClient {
                                 "current",
                                 "temperature_2m,apparent_temperature,"
                                         + "relative_humidity_2m,"
-                                        + "wind_speed_10m,weather_code"
+                                        + "wind_speed_10m,weather_code,is_day"
                         )
                         .queryParam("temperature_unit", "celsius")
                         .queryParam("wind_speed_unit", "kmh")
