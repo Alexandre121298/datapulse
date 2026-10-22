@@ -8,6 +8,8 @@ import {
   deleteTrackedCity,
   getTrackedCities
 } from "../services/trackedCityService";
+import { useCitiesWeather } from "../hooks/useCitiesWeather";
+import WeatherHero from "../components/WeatherHero";
 import "./TrackedCitiesPage.css";
 
 
@@ -17,6 +19,16 @@ function TrackedCitiesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+
+  const [selectedCityId, setSelectedCityId] =
+    useState<number | null>(null);
+
+  const getWeatherState = useCitiesWeather(trackedCities);
+
+  const selectedCity =
+    trackedCities.find((city) => city.id === selectedCityId) ??
+    trackedCities[0] ??
+    null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -51,6 +63,8 @@ function TrackedCitiesPage() {
         newCity
       ]);
 
+      setSelectedCityId(newCity.id);
+
       setIsAddFormOpen(false);
     }
 
@@ -70,11 +84,24 @@ function TrackedCitiesPage() {
     <main className="tracked-cities-page">
       <header className="tracked-cities-page__header">
         <div>
-          <h1>DataPulse</h1>
-          <p>Suivez la météo de vos villes préférées.</p>
+          <p className="tracked-cities-page__eyebrow">
+            Votre espace météo
+          </p>
+
+          <h1>La météo de vos villes.</h1>
+
+          <p className="tracked-cities-page__intro">
+            Retrouvez les conditions actuelles des lieux qui comptent pour vous.
+          </p>
         </div>
 
-        <button type="button" onClick={() => setIsAddFormOpen(true)}>
+        <button
+          className="tracked-cities-page__add-button"
+          type="button"
+          onClick={() => setIsAddFormOpen(true)}
+          disabled={isAddFormOpen}
+        >
+          <span aria-hidden="true">+</span>
           Ajouter une ville
         </button>
       </header>
@@ -83,6 +110,13 @@ function TrackedCitiesPage() {
         <AddCityForm
           onCancel={() => setIsAddFormOpen(false)}
           onAddCity={handleAddCity}
+        />
+      )}
+
+      {!isLoading && !error && selectedCity !== null && (
+        <WeatherHero
+          city={selectedCity}
+          weatherState={getWeatherState(selectedCity)}
         />
       )}
 
@@ -101,6 +135,9 @@ function TrackedCitiesPage() {
               <CityCard
                 key={city.id}
                 city={city}
+                weatherState={getWeatherState(city)}
+                isSelected={selectedCity?.id === city.id}
+                onSelect={() => setSelectedCityId(city.id)}
                 onDelete={handleDeleteCity}
               />
             ))}

@@ -1,49 +1,94 @@
 .tracked-cities-page {
-  width: min(1200px, 100% - 2rem);
+  max-width: var(--content-width);
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 48px var(--page-padding) 64px;
 }
 
 .tracked-cities-page__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
-  margin-bottom: 3rem;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.tracked-cities-page__eyebrow {
+  margin: 0 0 10px;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .tracked-cities-page__header h1 {
   margin: 0;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
 }
 
-.tracked-cities-page__header p {
-  margin: 0.5rem 0 0;
-  color: #5f6b7a;
+.tracked-cities-page__intro {
+  max-width: 540px;
+  margin: 14px 0 0;
+  color: var(--color-text-muted);
 }
 
-.tracked-cities-page__header button {
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #2563eb;
+.tracked-cities-page__add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: var(--color-primary);
   color: white;
-  cursor: pointer;
+  font-weight: 600;
 }
 
-.tracked-cities-page__header button:hover {
-  background-color: #1d4ed8;
+.tracked-cities-page__add-button span {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.tracked-cities-page__add-button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.tracked-cities-page__add-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.tracked-cities-page > section > h2 {
+  margin: 0 0 20px;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
 }
 
 .tracked-cities-page__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns:
+    repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 20px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+  .tracked-cities-page {
+    padding-top: 32px;
+  }
+
   .tracked-cities-page__header {
     align-items: flex-start;
     flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .tracked-cities-page__add-button {
+    width: 100%;
   }
 }

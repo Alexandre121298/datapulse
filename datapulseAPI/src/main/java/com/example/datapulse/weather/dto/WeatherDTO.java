@@ -2,6 +2,7 @@ package com.example.datapulse.weather.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WeatherDTO {
 
@@ -16,5 +17,7 @@ public class WeatherDTO {
         private Integer humidity;
         private Double windSpeed;
         private Integer weatherCode;
+        @JsonProperty("isDay")
+        private Boolean isDay;
     }
 }

@@ -1,0 +1,109 @@
+.app-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 20px var(--page-padding);
+}
+
+.app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.app-header__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.app-header__brand-name {
+  display: block;
+  font-size: 1.2rem;
+  letter-spacing: -0.04em;
+}
+
+.app-header__tagline {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.app-header__account {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.app-header__identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app-header__account-label {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.app-header__email {
+  overflow: hidden;
+  max-width: 260px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-header__logout {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.app-header__logout:hover:not(:disabled) {
+  background: var(--color-background);
+}
+
+.app-header__logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .app-header__account {
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .app-header__email {
+    max-width: 160px;
+  }
+}

@@ -35,7 +35,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
       onSubmit={handleSubmit}
       aria-busy={isSubmitting}
     >
-      <h1>DataPulse</h1>
+      <h1>Se connecter</h1>
       <p>Connectez-vous pour retrouver vos villes.</p>
 
       <div className="login-form__field">

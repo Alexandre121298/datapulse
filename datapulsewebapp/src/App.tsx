@@ -5,6 +5,8 @@ import TrackedCitiesPage from "./pages/TrackedCitiesPage";
 import { getCurrentUser, login, logout, register } from "./services/authService";
 import { SESSION_EXPIRED_EVENT } from "./services/apiClient";
 import type { AuthUser } from "./types/auth";
+import AppHeader from "./components/AppHeader";
+import AuthLayout from "./components/AuthLayout";
 import "./App.css";
 
 function getGoogleLoginError(): string | null {
@@ -143,72 +145,71 @@ function App() {
     );
   }
 
-  if (user === null) {
-    return (
-      <main className="auth-page">
-        {sessionError && (
-          <p className="session-error" role="alert">
-            {sessionError}
-          </p>
-        )}
-
-        {registrationMessage && (
-          <p className="registration-message" role="status">
-            {registrationMessage}
-          </p>
-        )}
-
-        {isRegistering ? (
-          <RegisterForm onRegister={handleRegister} />
-        ) : (
-          <LoginForm onLogin={handleLogin} />
-        )}
-
-        <a className="google-login" href="/api/oauth2/authorization/google">
-          Continuer avec Google
-        </a>
-
-        <button
-          type="button"
-          className="auth-switch"
-          onClick={() => {
-            setIsRegistering((previous) => !previous);
-            setSessionError(null);
-            setRegistrationMessage(null);
-          }}
-        >
-          {isRegistering
-            ? "J’ai déjà un compte : me connecter"
-            : "Créer un compte"}
-        </button>
-      </main>
-    );
-  }
-
-  
-
+if (user === null) {
   return (
-    <>
-      <div className="account-bar">
-        <span>Connecté avec {user.email}</span>
-
-        <button
-          type="button"
-          onClick={() => void handleLogout()}
-          disabled={isLoggingOut}
-        >
-          {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
-        </button>
-      </div>
-
+    <AuthLayout>
       {sessionError && (
         <p className="session-error" role="alert">
           {sessionError}
         </p>
       )}
 
+      {registrationMessage && (
+        <p className="registration-message" role="status">
+          {registrationMessage}
+        </p>
+      )}
+
+      {isRegistering ? (
+        <RegisterForm onRegister={handleRegister} />
+      ) : (
+        <LoginForm onLogin={handleLogin} />
+      )}
+
+      <div className="auth-layout__divider">ou</div>
+
+      <a
+        className="google-login"
+        href="/api/oauth2/authorization/google"
+      >
+        Continuer avec Google
+      </a>
+
+      <button
+        type="button"
+        className="auth-switch"
+        onClick={() => {
+          setIsRegistering((previous) => !previous);
+          setSessionError(null);
+          setRegistrationMessage(null);
+        }}
+      >
+        {isRegistering
+          ? "J’ai déjà un compte : me connecter"
+          : "Créer un compte"}
+      </button>
+    </AuthLayout>
+  );
+}
+
+  
+
+  return (
+    <div className="app-shell">
+      <AppHeader
+        email={user.email}
+        isLoggingOut={isLoggingOut}
+        onLogout={handleLogout}
+      />
+
+      {sessionError && (
+        <p className="session-error app-shell__error" role="alert">
+          {sessionError}
+        </p>
+      )}
+
       <TrackedCitiesPage key={user.id} />
-    </>
+    </div>
   );
 }
 

@@ -1,71 +1,127 @@
-
 .add-city-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  background-color: white;
-  border: 1px solid #dce3ed;
-  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.add-city-form h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1.2rem;
+  letter-spacing: -0.025em;
+}
+
+.add-city-form__description {
+  grid-column: 1 / -1;
+  margin: -12px 0 4px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
 }
 
 .add-city-form__field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
+  min-width: 0;
+}
+
+.add-city-form__field label {
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .add-city-form__field input {
-  padding: 0.75rem;
-  border: 1px solid #dce3ed;
-  border-radius: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
-.add-city-form__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
+.add-city-form__field input::placeholder {
+  color: var(--color-text-muted);
 }
 
-
-/* Style commun aux boutons */
-.add-city-form__actions button {
-  padding: 0.75rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-/* Bouton Annuler */
-.add-city-form__cancel-button {
-  background-color: #e5e7eb;
-  color: #374151;
-}
-
-.add-city-form__cancel-button:hover {
-  background-color: #d1d5db;
-}
-
-/* Bouton Ajouter */
-.add-city-form__submit-button {
-  background-color: #2563eb;
-  color: white;
-}
-
-.add-city-form__submit-button:hover {
-  background-color: #1d4ed8;
+.add-city-form__field input:hover:not(:disabled) {
+  border-color: #94a3b8;
 }
 
 .add-city-form__error {
-  color: #dc3545;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-small);
+  background: #fff1f2;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.add-city-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.add-city-form__actions button {
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-small);
   font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.add-city-form__actions .add-city-form__cancel-button {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.add-city-form__cancel-button:hover:not(:disabled) {
+  background: var(--color-background);
+}
+
+.add-city-form__submit-button {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.add-city-form__submit-button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
 }
 
 .add-city-form__actions button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  opacity: 0.55;
+  cursor: wait;
+}
+
+@media (max-width: 600px) {
+  .add-city-form {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 20px;
+  }
+
+  .add-city-form__actions {
+    flex-direction: column;
+  }
+
+  .add-city-form__actions button {
+    width: 100%;
+  }
 }
