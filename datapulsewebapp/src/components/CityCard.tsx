@@ -1,34 +1,27 @@
-
-import { useState, useEffect } from "react";
 import type { TrackedCity } from "../types/trackedCity";
-import type { Weather } from "../types/weather";
-import { getCurrentWeather } from "../services/weatherService";
+import { useState } from "react";
+import type { CityWeatherState } from "../types/cityWeather";
 import { getWeatherDescription } from "../utils/weatherUtils";
 import "./CityCard.css";
 import {
+  ArrowUpRight,
   Cloud,
   CloudFog,
   CloudLightning,
   CloudRain,
   CloudSnow,
   CloudSun,
-  Droplets,
   LoaderCircle,
   Sun,
   Trash,
-  Wind,
 } from "lucide-react";
 
 interface CityCardProps {
   city: TrackedCity;
+  weatherState: CityWeatherState;
+  isSelected: boolean;
+  onSelect: () => void;
   onDelete: (city: TrackedCity) => Promise<void>;
-}
-
-interface WeatherResult {
-  latitude: number;
-  longitude: number;
-  data: Weather | null;
-  error: string | null;
 }
 
 const weatherNumberFormatter = new Intl.NumberFormat("fr-FR", {
@@ -80,77 +73,21 @@ function getWeatherIcon(code: number | null) {
   return null;
 }
 
-function CityCard({ city, onDelete }: CityCardProps) {
+function CityCard({
+  city,
+  weatherState,
+  isSelected,
+  onSelect,
+  onDelete,
+}: CityCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const [weatherResult, setWeatherResult] =
-  useState<WeatherResult | null>(null);
 
-const matchingResult =
-  weatherResult !== null &&
-  weatherResult.latitude === city.latitude &&
-  weatherResult.longitude === city.longitude
-    ? weatherResult
-    : null;
-
-const weather = matchingResult?.data ?? null;
-const weatherError = matchingResult?.error ?? null;
-
-const isWeatherLoading =
-  city.latitude != null &&
-  city.longitude != null &&
-  matchingResult === null;
-
-
-useEffect(() => {
-  const latitude = city.latitude;
-  const longitude = city.longitude;
-
-  if (latitude == null || longitude == null) {
-    return;
-  }
-
-  const controller = new AbortController();
-
-  async function loadWeather(
-    latitude: number,
-    longitude: number
-  ) {
-    try {
-      const data = await getCurrentWeather(
-        latitude,
-        longitude,
-        controller.signal
-      );
-
-      if (!controller.signal.aborted) {
-        setWeatherResult({
-          latitude,
-          longitude,
-          data,
-          error: null,
-        });
-      }
-    } catch (err) {
-      if (!controller.signal.aborted) {
-        setWeatherResult({
-          latitude,
-          longitude,
-          data: null,
-          error:
-            err instanceof Error
-              ? err.message
-              : "Impossible de récupérer la météo.",
-        });
-      }
-    }
-  }
-
-  void loadWeather(latitude, longitude);
-
-  return () => controller.abort();
-}, [city.latitude, city.longitude]);
+  const {
+    weather,
+    isLoading: isWeatherLoading,
+    error: weatherError,
+  } = weatherState;
 
 
   async function handleDelete() {
@@ -178,20 +115,75 @@ useEffect(() => {
 
   return (
     <article
-      className="city-card"
+      className={`city-card${isSelected ? " city-card--selected" : ""}`}
       aria-labelledby={`city-title-${city.id}`}
     >
-      <header className="city-card__header">
-        <div>
-          <h3
-            className="city-card__title"
-            id={`city-title-${city.id}`}
-          >
-            {city.name}
-          </h3>
+      <div className="city-card__body">
+        <button
+          className="city-card__select"
+          type="button"
+          onClick={onSelect}
+          aria-pressed={isSelected}
+          aria-labelledby={`city-title-${city.id} city-country-${city.id}`}
+          aria-describedby={`city-temperature-${city.id} city-weather-${city.id}`}
+        >
+          <span className="city-card__overview">
+            <span
+              className="city-card__weather-symbol"
+              aria-hidden="true"
+            >
+              {getWeatherIcon(weather?.weatherCode ?? null)}
+            </span>
 
-          <p className="city-card__country">{city.country}</p>
-        </div>
+            <span
+              className="city-card__temperature"
+              id={`city-temperature-${city.id}`}
+            >
+              {formatWeatherValue(weather?.temperature ?? null)}
+
+              {weather?.temperature != null && (
+                <span className="city-card__temperature-unit">
+                  °C
+                </span>
+              )}
+            </span>
+          </span>
+
+          <span className="city-card__identity">
+            <span
+              className="city-card__title"
+              id={`city-title-${city.id}`}
+            >
+              {city.name}
+            </span>
+
+            <span
+              className="city-card__country"
+              id={`city-country-${city.id}`}
+            >
+              {city.country}
+            </span>
+          </span>
+
+          <span
+            className="city-card__condition"
+            id={`city-weather-${city.id}`}
+          >
+            {isWeatherLoading
+              ? "Chargement de la météo…"
+              : weatherError || !weather
+                ? "Météo indisponible"
+                : getWeatherDescription(weather.weatherCode)}
+          </span>
+
+          <span className="city-card__select-hint">
+            {isSelected ? "Ville affichée" : "Afficher la météo"}
+
+            {!isSelected && (
+              <ArrowUpRight size={16} aria-hidden="true" />
+            )}
+          </span>
+        </button>
 
         <button
           className="city-card__delete-button"
@@ -207,103 +199,15 @@ useEffect(() => {
         >
           {isDeleting ? (
             <LoaderCircle
-              size={18}
+              size={17}
               className="city-card__spinner"
               aria-hidden="true"
             />
           ) : (
-            <Trash size={18} aria-hidden="true" />
+            <Trash size={17} aria-hidden="true" />
           )}
         </button>
-      </header>
-
-      <section
-        className="city-card__weather"
-        aria-label={`Météo actuelle à ${city.name}`}
-        aria-busy={isWeatherLoading}
-      >
-        {city.latitude == null || city.longitude == null ? (
-          <p className="city-card__state">
-            La météo de cette ville n’est pas disponible.
-          </p>
-        ) : isWeatherLoading ? (
-          <p className="city-card__state" role="status">
-            Chargement de la météo...
-          </p>
-        ) : weatherError ? (
-          <p
-            className="city-card__state city-card__error"
-            role="alert"
-          >
-            {weatherError}
-          </p>
-        ) : weather ? (
-          <>
-            <div className="city-card__weather-hero">
-              <div>
-                <p
-                  className="city-card__temperature"
-                  aria-label={
-                    weather.temperature == null
-                      ? "Température indisponible"
-                      : `Température : ${formatWeatherValue(
-                          weather.temperature
-                        )} degrés Celsius`
-                  }
-                >
-                  {formatWeatherValue(weather.temperature)}
-
-                  {weather.temperature != null && (
-                    <span className="city-card__temperature-unit">
-                      °C
-                    </span>
-                  )}
-                </p>
-
-                <p className="city-card__condition">
-                  {getWeatherDescription(weather.weatherCode)}
-                </p>
-              </div>
-
-              <span
-                className="city-card__weather-symbol"
-                aria-hidden="true"
-              >
-                {getWeatherIcon(weather.weatherCode)}
-              </span>
-            </div>
-
-            <p className="city-card__feels-like">
-              Ressenti :{" "}
-              {formatWeatherValue(weather.apparentTemperature, "°C")}
-            </p>
-
-            <dl className="city-card__stats">
-              <div>
-                <dt>
-                  <Droplets size={16} aria-hidden="true" />
-                  Humidité
-                </dt>
-
-                <dd>
-                  {formatWeatherValue(weather.humidity, "%")}
-                </dd>
-              </div>
-
-              <div>
-                <dt>
-                  <Wind size={16} aria-hidden="true" />
-                  Vent
-                </dt>
-
-                <dd>
-                  {formatWeatherValue(weather.windSpeed, "km/h")}
-                </dd>
-              </div>
-            </dl>
-          </>
-        ) : null}
-      </section>
+      </div>
 
       {error && (
         <p className="city-card__error" role="alert">

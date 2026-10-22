@@ -1,47 +1,152 @@
 .city-card {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
   min-width: 0;
-  padding: 24px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-large);
   background: var(--color-surface);
   box-shadow: var(--shadow-panel);
+  animation: city-card-enter 450ms ease-out backwards;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
 }
 
-.city-card__header {
+.city-card:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.city-card:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.city-card:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.city-card--selected {
+  border-color: var(--color-primary);
+  background: #f5f8ff;
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.city-card__body {
+  position: relative;
+}
+
+.city-card__select {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-height: 240px;
+  padding: 22px;
+  border: 0;
+  border-radius: var(--radius-large);
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.city-card__overview {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
 
-.city-card__title {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 1.25rem;
-  line-height: 1.3;
-  letter-spacing: -0.03em;
-  overflow-wrap: anywhere;
-}
-
-.city-card__country {
-  margin: 5px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-}
-
-.city-card__delete-button {
+.city-card__weather-symbol {
   display: grid;
   place-items: center;
   flex-shrink: 0;
   width: 44px;
   height: 44px;
+  border-radius: 14px;
+  background: var(--color-background);
+  color: #647b98;
+}
+
+.city-card__weather-symbol svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.6;
+}
+
+.city-card__weather-symbol .city-card__sun {
+  color: #b77910;
+}
+
+.city-card__temperature {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.city-card__temperature-unit {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.city-card__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.city-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.city-card__country {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.city-card__condition {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.city-card__select-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  margin-top: auto;
+  padding-right: 54px;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.city-card__select-hint svg {
+  flex-shrink: 0;
+  transition: transform 220ms ease;
+}
+
+.city-card__delete-button {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-small);
-  background: transparent;
+  background: var(--color-surface);
   color: var(--color-text-muted);
 }
 
@@ -52,120 +157,43 @@
 }
 
 .city-card__delete-button:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: wait;
-}
-
-.city-card__weather {
-  flex: 1;
-  min-height: 210px;
-}
-
-.city-card__weather-hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.city-card__temperature {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin: 0;
-  color: var(--color-text);
-  font-size: clamp(3rem, 5vw, 3.75rem);
-  font-weight: 650;
-  line-height: 1.1;
-  letter-spacing: -0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.city-card__temperature-unit {
-  color: var(--color-text-muted);
-  font-size: 1.4rem;
-  font-weight: 400;
-  letter-spacing: normal;
-}
-
-.city-card__condition {
-  margin: 10px 0 0;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.city-card__weather-symbol {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  color: #647b98;
-}
-
-.city-card__weather-symbol svg {
-  width: 64px;
-  height: 64px;
-  stroke-width: 1.5;
-}
-
-.city-card__weather-symbol .city-card__sun {
-  color: #c68112;
-}
-
-.city-card__feels-like {
-  margin: 14px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-}
-
-.city-card__stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin: 24px 0 0;
-  padding: 16px;
-  border-radius: 12px;
-  background: var(--color-background);
-}
-
-.city-card__stats > div {
-  min-width: 0;
-}
-
-.city-card__stats dt {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
-}
-
-.city-card__stats dd {
-  margin: 8px 0 0;
-  color: var(--color-text);
-  font-size: 1rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.city-card__state {
-  display: grid;
-  place-items: center;
-  min-height: 210px;
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  text-align: center;
 }
 
 .city-card__error {
   margin: 0;
+  padding: 0 22px 18px;
   color: #b91c1c;
   font-size: 0.85rem;
+  overflow-wrap: anywhere;
 }
 
 .city-card__spinner {
   animation: city-card-spin 1s linear infinite;
+}
+
+@media (hover: hover) {
+  .city-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgb(23 43 70 / 12%);
+  }
+
+  .city-card__select:hover .city-card__select-hint svg {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes city-card-enter {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 @keyframes city-card-spin {
@@ -175,7 +203,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .city-card__spinner {
+  .city-card,
+  .city-card *,
+  .city-card *::before,
+  .city-card *::after {
     animation: none;
+    transition: none;
+  }
+
+  .city-card:hover {
+    transform: none;
+  }
+
+  .city-card__select:hover .city-card__select-hint svg {
+    transform: none;
   }
 }

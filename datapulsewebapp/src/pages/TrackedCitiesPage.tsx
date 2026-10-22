@@ -8,6 +8,8 @@ import {
   deleteTrackedCity,
   getTrackedCities
 } from "../services/trackedCityService";
+import { useCitiesWeather } from "../hooks/useCitiesWeather";
+import WeatherHero from "../components/WeatherHero";
 import "./TrackedCitiesPage.css";
 
 
@@ -17,6 +19,15 @@ function TrackedCitiesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+
+  const [selectedCityId, setSelectedCityId] = useState<number | null>(null);
+
+  const getWeatherState = useCitiesWeather(trackedCities);
+
+  const selectedCity =
+    trackedCities.find((city) => city.id === selectedCityId) ??
+    trackedCities[0] ??
+    null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,6 +61,8 @@ function TrackedCitiesPage() {
         ...previousCities,
         newCity
       ]);
+
+      setSelectedCityId(newCity.id);
 
       setIsAddFormOpen(false);
     }
@@ -99,6 +112,13 @@ function TrackedCitiesPage() {
         />
       )}
 
+      {!isLoading && !error && selectedCity !== null && (
+        <WeatherHero
+          city={selectedCity}
+          weatherState={getWeatherState(selectedCity)}
+        />
+      )}
+
       <section>
         <h2>Mes villes suivies</h2>
 
@@ -114,6 +134,9 @@ function TrackedCitiesPage() {
               <CityCard
                 key={city.id}
                 city={city}
+                weatherState={getWeatherState(city)}
+                isSelected={selectedCity?.id === city.id}
+                onSelect={() => setSelectedCityId(city.id)}
                 onDelete={handleDeleteCity}
               />
             ))}
